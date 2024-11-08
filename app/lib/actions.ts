@@ -14,6 +14,7 @@ const FormSchema = z.object({
             .number()
             .gt(0, { message: 'Please enter an amount greater than $0.' }),
   status: z.enum(['pending', 'paid'], { invalid_type_error: 'Please select an invoice status.' }),
+  signature: z.string(),
   date: z.string(),
 });
  
@@ -23,7 +24,7 @@ export type State = {
   errors?: {
     customerId?: string[];
     amount?: string[];
-    canvas?: string[];
+    signature?: string[];
     status?: string[];
   };
   message?: string | null;
@@ -52,6 +53,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
+    signature: formData.get('canvasString'),
     status: formData.get('status'),
   });
 
@@ -62,14 +64,14 @@ export async function createInvoice(prevState: State, formData: FormData) {
     };
   }
 
-  const { customerId, amount, status } = validatedFields.data;
+  const { customerId, amount, status, signature } = validatedFields.data;
   const amountInCents = amount * 100;
   const date = new Date().toISOString().split('T')[0];
   
   try {
     await sql`
-      INSERT INTO invoices (customer_id, amount, status, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+      INSERT INTO invoices (customer_id, amount, status, signature, date)
+      VALUES (${customerId}, ${amountInCents}, ${status}, ${signature}, ${date})
     `;
   } catch (error) {
     return {

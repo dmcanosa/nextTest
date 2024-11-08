@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-export default function Canvas(){
+export default function Canvas({ saveCanvas }){
   const [mouseDown, setMouseDown] = useState(false);
   const [mouseDownPoint, setMouseDownPoint] = useState({x: 0, y: 0});
   const canvasRef = useRef(null);
@@ -38,7 +38,9 @@ export default function Canvas(){
   const handleMouseUp = (e) => {
     console.log('mouse Up');
     setMouseDown(false);
-    //setMouseDownPoint({ x: 0, y: 0 });  
+    saveCanvas(canvasRef.current.toDataURL());
+    //let b64 = canvasRef.current.toDataURL();
+    //console.log(b64);
   };
 
   return (

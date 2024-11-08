@@ -17,6 +17,11 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createInvoice, initialState);
   
+  const saveCanvas = (s) => {
+    console.log('saveCanvas!');
+    document.getElementById('canvasString').innerText = s;  
+  }
+
   return (
     <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
@@ -90,7 +95,9 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <Canvas >
+              <Canvas
+                saveCanvas = { saveCanvas } 
+              >
 
               </Canvas>
               {/*<input
@@ -104,11 +111,12 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
               />
               <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
               */}
+              <input type='hidden' name='canvasString' id='canvasString'></input>
             </div>
           </div>
           <div id="canvas-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.canvas &&
-              state.errors.canvas.map((error: string) => (
+            {state.errors?.signature &&
+              state.errors.signature.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>
