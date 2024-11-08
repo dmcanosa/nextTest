@@ -23,6 +23,7 @@ export type State = {
   errors?: {
     customerId?: string[];
     amount?: string[];
+    canvas?: string[];
     status?: string[];
   };
   message?: string | null;
