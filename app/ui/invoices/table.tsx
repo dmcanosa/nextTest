@@ -124,7 +124,7 @@ export default async function InvoicesTable({
                         src={invoice.signature}
                         width={100}
                         height={100}
-                        style={{ width: 'auto' }}
+                        style={{ width: 'auto !important', height: '15vh' }}
                         alt={`${invoice.name}'s profile picture`}
                       />
                     } 
