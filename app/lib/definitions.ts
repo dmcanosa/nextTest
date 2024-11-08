@@ -21,6 +21,7 @@ export type Invoice = {
   customer_id: string;
   amount: number; // Stored in cents
   status: 'pending' | 'paid';
+  signature: String;
   date: string;
 };
 
@@ -51,6 +52,7 @@ export type InvoicesTable = {
   date: string;
   amount: number;
   status: 'pending' | 'paid';
+  signature: string;
 };
 
 export type CustomersTableType = {

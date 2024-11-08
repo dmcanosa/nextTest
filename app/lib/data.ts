@@ -97,6 +97,7 @@ export async function fetchFilteredInvoices(
         invoices.amount,
         invoices.date,
         invoices.status,
+        invoices.signature,
         customers.name,
         customers.email,
         customers.image_url

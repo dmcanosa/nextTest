@@ -38,7 +38,11 @@ export default function Canvas({ saveCanvas }){
   const handleMouseUp = (e) => {
     console.log('mouse Up');
     setMouseDown(false);
-    saveCanvas(canvasRef.current.toDataURL());
+    let b64 = canvasRef.current.toDataURL();
+    //b64 = b64.substring(22);
+    //data:image/png;base64,
+    //console.log(b64);
+    saveCanvas(b64);
     //let b64 = canvasRef.current.toDataURL();
     //console.log(b64);
   };

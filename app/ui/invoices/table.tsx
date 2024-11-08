@@ -38,6 +38,14 @@ export default async function InvoicesTable({
                     <p className="text-sm text-gray-500">{invoice.email}</p>
                   </div>
                   <InvoiceStatus status={invoice.status} />
+                  {/* invoice.signature &&
+                    <Image 
+                      src={invoice.signature}
+                      width={{'auto'}}
+                      height={100}
+                      alt={`${invoice.name}'s profile picture`}
+                    />
+                  */}  
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
@@ -71,6 +79,9 @@ export default async function InvoicesTable({
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Status
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Signature
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
@@ -106,6 +117,17 @@ export default async function InvoicesTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <InvoiceStatus status={invoice.status} />
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    { invoice.signature &&
+                      <Image 
+                        src={invoice.signature}
+                        width={100}
+                        height={100}
+                        style={{ width: 'auto' }}
+                        alt={`${invoice.name}'s profile picture`}
+                      />
+                    } 
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

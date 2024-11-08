@@ -19,7 +19,8 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
   
   const saveCanvas = (s) => {
     console.log('saveCanvas!');
-    document.getElementById('canvasString').innerText = s;  
+    let inputCanvas = document.getElementById('canvasString') as HTMLInputElement;
+    inputCanvas.value = s;  
   }
 
   return (
