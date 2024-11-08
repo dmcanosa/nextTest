@@ -17,7 +17,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createInvoice, initialState);
   
-  const saveCanvas = (s) => {
+  const saveCanvas = (s:string):void => {
     console.log('saveCanvas!');
     let inputCanvas = document.getElementById('canvasString') as HTMLInputElement;
     inputCanvas.value = s;  
@@ -96,11 +96,14 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <Canvas
-                saveCanvas = { saveCanvas } 
-              >
-
-              </Canvas>
+              <>
+              {
+                <Canvas
+                  //saveCanvas = { saveCanvas } : { saveCanvas:any; } 
+                  saveCanvas = {saveCanvas}  
+                />
+              }
+              </>
               <input type='hidden' name='canvasString' id='canvasString'></input>
             </div>
           </div>
