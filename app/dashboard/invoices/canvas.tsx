@@ -1,8 +1,7 @@
-import React, { useState, useRef, SyntheticEvent, ReactElement, ReactNode } from 'react';
-import { JsxElement } from 'typescript';
+import React, { useState, useRef, SyntheticEvent } from 'react';
 
 type CanvasProps = {
-  saveCanvas: Function;
+  saveCanvas: (s:string) => void;
 };
 
 export default function Canvas( {saveCanvas}: CanvasProps){
@@ -42,7 +41,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   };
 
   const handleMouseUp = (e: SyntheticEvent) => {
-    console.log('mouse Up');
+    console.log('mouse Up', e);
     setMouseDown(false);
     let b64:string = '';
     if(canvasRef.current){
