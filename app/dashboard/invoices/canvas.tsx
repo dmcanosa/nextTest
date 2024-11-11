@@ -1,6 +1,11 @@
-import React, { useState, useRef, SyntheticEvent } from 'react';
+import React, { useState, useRef, SyntheticEvent, ReactElement, ReactNode } from 'react';
+import { JsxElement } from 'typescript';
 
-export default function Canvas( {saveCanvas} : {saveCanvas:any}){
+type CanvasProps = {
+  saveCanvas: Function;
+};
+
+export default function Canvas( {saveCanvas}: CanvasProps){
   const [mouseDown, setMouseDown] = useState(false);
   const [mouseDownPoint, setMouseDownPoint] = useState({x: 0, y: 0});
   const canvasRef = useRef(null);
@@ -15,7 +20,7 @@ export default function Canvas( {saveCanvas} : {saveCanvas:any}){
       stage.lineWidth = 2;
 
       stage.moveTo(((e.nativeEvent as MouseEvent) as MouseEvent).offsetX, ((e.nativeEvent as MouseEvent) as MouseEvent).offsetY);
-    
+    }
     setMouseDown(true);
   };
   
@@ -61,6 +66,5 @@ export default function Canvas( {saveCanvas} : {saveCanvas:any}){
       onMouseUp={ handleMouseUp }
     />
   );
-}
 }
 

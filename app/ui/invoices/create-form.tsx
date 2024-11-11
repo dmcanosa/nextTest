@@ -96,14 +96,9 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <>
-              {
-                <Canvas
-                  //saveCanvas = { saveCanvas } : { saveCanvas:any; } 
-                  saveCanvas = {saveCanvas}  
-                />
-              }
-              </>
+              <Canvas
+                saveCanvas = {saveCanvas}  
+              />
               <input type='hidden' name='canvasString' id='canvasString'></input>
             </div>
           </div>

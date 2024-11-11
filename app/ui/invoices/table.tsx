@@ -38,14 +38,14 @@ export default async function InvoicesTable({
                     <p className="text-sm text-gray-500">{invoice.email}</p>
                   </div>
                   <InvoiceStatus status={invoice.status} />
-                  {/* invoice.signature &&
+                  {invoice.signature &&
                     <Image 
                       src={invoice.signature}
-                      width={{'auto'}}
-                      height={100}
+                      width={128}
+                      height={96}
                       alt={`${invoice.name}'s profile picture`}
                     />
-                  */}  
+                  }  
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
