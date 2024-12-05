@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
+import { SignupFormSchema, FormState } from '@/app/lib/definitions';
  
 async function getUser(email: string): Promise<User | undefined> {
   try {
@@ -15,7 +16,39 @@ async function getUser(email: string): Promise<User | undefined> {
     throw new Error('Failed to fetch user.');
   }
 }
+
+export async function signUp(formData:FormData){
+  const validatedFields = SignupFormSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+  })
  
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    }
+  }
+ 
+  const { name, email, password } = validatedFields.data
+  const hashedPassword = await bcrypt.hash(password, 10)
+  console.log('getuser: ',await getUser(email));
+  const user = await getUser(email);
+  if(!user){
+    try {
+      const newUser = await sql<User>`INSERT INTO users (name, email, password) 
+      values (${name}, ${email}, ${hashedPassword})`;
+      if (!newUser) {
+        console.log('An error occurred while creating your account.');
+      }
+      const data = newUser.rows[0];
+    } catch (error) {
+      console.error('Failed to fetch user:', error);
+      throw new Error('Failed to fetch user.');
+    }
+  }
+}
+
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
