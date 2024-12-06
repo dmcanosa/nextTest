@@ -10,12 +10,12 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
-import { createInvoice, State } from '@/app/lib/actions';
-import Canvas from '@/app/dashboard/invoices/canvas';
+import { createSignature, State } from '@/app/lib/actions';
+import Canvas from '@/app/dashboard/signatures/canvas';
 
-export default function Form({ customers }: { customers: CustomerField[] }) {
+export default function Form(/*{ customers }: { customers: CustomerField[] }*/) {
   const initialState: State = { message: null, errors: {} };
-  const [state, formAction] = useActionState(createInvoice, initialState);
+  const [state, formAction] = useActionState(createSignature, initialState);
   
   const saveCanvas = (s:string):void => {
     console.log('saveCanvas!');
@@ -26,7 +26,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
   return (
     <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Customer Name */}
+        {/* Customer Name 
         <div className="mb-4">
           <label htmlFor="customer" className="mb-2 block text-sm font-medium">
             Choose customer
@@ -58,7 +58,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 </p>
               ))}
           </div>
-        </div>
+        </div>*/}
 
         {/* Invoice Amount */}
         <div className="mb-4">
@@ -165,12 +165,12 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/invoices"
+          href="/dashboard/signatures"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
-        <Button type="submit">Create Invoice</Button>
+        <Button type="submit">Create Signature</Button>
       </div>
     </form>
   );

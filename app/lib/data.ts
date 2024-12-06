@@ -2,9 +2,9 @@ import { sql } from '@vercel/postgres';
 import {
   CustomerField,
   CustomersTableType,
-  InvoiceForm,
-  InvoicesTable,
-  LatestInvoiceRaw,
+  SignatureForm,
+  SignaturesTable,
+  LatestSignatureRaw,
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
@@ -28,23 +28,23 @@ export async function fetchRevenue() {
   }
 }
 
-export async function fetchLatestInvoices() {
+export async function fetchLatestSignatures() {
   try {
-    const data = await sql<LatestInvoiceRaw>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
+    const data = await sql<LatestSignatureRaw>`
+      SELECT Signatures.amount, customers.name, customers.image_url, customers.email, Signatures.id
+      FROM Signatures
+      JOIN customers ON Signatures.customer_id = customers.id
+      ORDER BY Signatures.date DESC
       LIMIT 5`;
 
-    const latestInvoices = data.rows.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
+    const latestSignatures = data.rows.map((Signature) => ({
+      ...Signature,
+      amount: formatCurrency(Signature.amount),
     }));
-    return latestInvoices;
+    return latestSignatures;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    throw new Error('Failed to fetch the latest Signatures.');
   }
 }
 
@@ -53,29 +53,29 @@ export async function fetchCardData() {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
+    const SignatureCountPromise = sql`SELECT COUNT(*) FROM Signatures`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
+    const SignatureStatusPromise = sql`SELECT
          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+         FROM Signatures`;
 
     const data = await Promise.all([
-      invoiceCountPromise,
+      SignatureCountPromise,
       customerCountPromise,
-      invoiceStatusPromise,
+      SignatureStatusPromise,
     ]);
 
-    const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
+    const numberOfSignatures = Number(data[0].rows[0].count ?? '0');
     const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+    const totalPaidSignatures = formatCurrency(data[2].rows[0].paid ?? '0');
+    const totalPendingSignatures = formatCurrency(data[2].rows[0].pending ?? '0');
 
     return {
       numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
+      numberOfSignatures,
+      totalPaidSignatures,
+      totalPendingSignatures,
     };
   } catch (error) {
     console.error('Database Error:', error);
@@ -84,86 +84,86 @@ export async function fetchCardData() {
 }
 
 const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices(
+export async function fetchFilteredSignatures(
   query: string,
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const invoices = await sql<InvoicesTable>`
+    const Signatures = await sql<SignaturesTable>`
       SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        invoices.signature,
+        Signatures.id,
+        Signatures.amount,
+        Signatures.date,
+        Signatures.status,
+        Signatures.signature,
         customers.name,
         customers.email,
         customers.image_url
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+      FROM Signatures
+      JOIN customers ON Signatures.customer_id = customers.id
       WHERE
         customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ORDER BY invoices.date DESC
+        Signatures.amount::text ILIKE ${`%${query}%`} OR
+        Signatures.date::text ILIKE ${`%${query}%`} OR
+        Signatures.status ILIKE ${`%${query}%`}
+      ORDER BY Signatures.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
-    return invoices.rows;
+    return Signatures.rows;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    throw new Error('Failed to fetch Signatures.');
   }
 }
 
-export async function fetchInvoicesPages(query: string) {
+export async function fetchSignaturesPages(query: string) {
   try {
     const count = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
+    FROM Signatures
+    JOIN customers ON Signatures.customer_id = customers.id
     WHERE
       customers.name ILIKE ${`%${query}%`} OR
       customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
+      Signatures.amount::text ILIKE ${`%${query}%`} OR
+      Signatures.date::text ILIKE ${`%${query}%`} OR
+      Signatures.status ILIKE ${`%${query}%`}
   `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
+    throw new Error('Failed to fetch total number of Signatures.');
   }
 }
 
-export async function fetchInvoiceById(id: string) {
+export async function fetchSignatureById(id: string) {
   try {
-    const data = await sql<InvoiceForm>`
+    const data = await sql<SignatureForm>`
       SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
+        Signatures.id,
+        Signatures.customer_id,
+        Signatures.amount,
+        Signatures.status
+      FROM Signatures
+      WHERE Signatures.id = ${id};
     `;
 
-    const invoice = data.rows.map((invoice) => ({
-      ...invoice,
+    const Signature = data.rows.map((Signature) => ({
+      ...Signature,
       // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
+      amount: Signature.amount / 100,
     }));
 
-    console.log(invoice); // Invoice is an empty array []
-    return invoice[0];
+    console.log(Signature); // Signature is an empty array []
+    return Signature[0];
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
+    throw new Error('Failed to fetch Signature.');
   }
 }
 
@@ -193,11 +193,11 @@ export async function fetchFilteredCustomers(query: string) {
 		  customers.name,
 		  customers.email,
 		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
+		  COUNT(Signatures.id) AS total_Signatures,
+		  SUM(CASE WHEN Signatures.status = 'pending' THEN Signatures.amount ELSE 0 END) AS total_pending,
+		  SUM(CASE WHEN Signatures.status = 'paid' THEN Signatures.amount ELSE 0 END) AS total_paid
 		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
+		LEFT JOIN Signatures ON customers.id = Signatures.customer_id
 		WHERE
 		  customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`}

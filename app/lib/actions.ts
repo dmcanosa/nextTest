@@ -14,12 +14,12 @@ const FormSchema = z.object({
   amount: z.coerce
             .number()
             .gt(0, { message: 'Please enter an amount greater than $0.' }),
-  status: z.enum(['pending', 'paid'], { invalid_type_error: 'Please select an invoice status.' }),
+  status: z.enum(['pending', 'paid'], { invalid_type_error: 'Please select an Signature status.' }),
   signature: z.string(),
   date: z.string(),
 });
  
-const CreateInvoice = FormSchema.omit({ id: true, date: true });
+const CreateSignature = FormSchema.omit({ id: true, date: true });
 
 export type State = {
   errors?: {
@@ -83,9 +83,8 @@ export async function register(
   }
 }
 
-export async function createInvoice(prevState: State, formData: FormData) {
-  const validatedFields = CreateInvoice.safeParse({
-    customerId: formData.get('customerId'),
+export async function createSignature(prevState: State, formData: FormData) {
+  const validatedFields = CreateSignature.safeParse({
     amount: formData.get('amount'),
     signature: formData.get('canvasString'),
     status: formData.get('status'),
@@ -94,11 +93,11 @@ export async function createInvoice(prevState: State, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Invoice.',
+      message: 'Missing Fields. Failed to Create Signature.',
     };
   }
 
-  const { customerId, amount, status, signature } = validatedFields.data;
+  const { amount, status, signature } = validatedFields.data;
   const amountInCents = amount * 100;
   const date = new Date().toISOString().split('T')[0];
   
@@ -106,65 +105,64 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
   try {
     await sql`
-      INSERT INTO invoices (customer_id, amount, status, signature, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${signature}, ${date})
+      INSERT INTO signatures (amount, status, signature, date)
+      VALUES ( ${amountInCents}, ${status}, ${signature}, ${date})
     `;
   } catch (error) {
     return {
-      message: 'Database Error: Failed to Create Invoice.'+error,
+      message: 'Database Error: Failed to Create Signature.'+error,
     };
   }
 
-  try {
+  /*try {
     await sql`
       INSERT INTO signatures (user_id, signature_data)
       VALUES (${customerId}, ${signature})
     `;
   } catch (error) {
     return {
-      message: 'Database Error: Failed to Create Invoice.'+error,
+      message: 'Database Error: Failed to Create Signature.'+error,
     };
-  }
+  }*/
 
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+  revalidatePath('/dashboard/signatures');
+  redirect('/dashboard/signatures');
 }
 
-const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+const UpdateSignature = FormSchema.omit({ id: true, date: true });
  
-export async function updateInvoice(id: string, formData: FormData) {
-  const { customerId, amount, status } = UpdateInvoice.parse({
-    customerId: formData.get('customerId'),
+export async function updateSignature(id: string, formData: FormData) {
+  const { amount, status } = UpdateSignature.parse({
     amount: formData.get('amount'),
     status: formData.get('status'),
   });
  
   const amountInCents = amount * 100;
   
-  console.log("UPDATE invoices SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status} WHERE id = ${id}");
+  //console.log("UPDATE signatures SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status} WHERE id = ${id}");
 
   try {
     await sql`
-        UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+        UPDATE signatures
+        SET amount = ${amountInCents}, status = ${status}
         WHERE id = ${id}
       `;
   } catch (error) {
-    return { message: 'Database Error: Failed to Update Invoice.'+error };
+    return { message: 'Database Error: Failed to Update Signature.'+error };
   }
  
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+  revalidatePath('/dashboard/signatures');
+  redirect('/dashboard/signatures');
 }
 
-export async function deleteInvoice(id: string) {
-  //throw new Error('Failed to Delete Invoice');
+export async function deleteSignature(id: string) {
+  //throw new Error('Failed to Delete Signature');
 
   try {
-    await sql`DELETE FROM invoices WHERE id = ${id}`;
-    revalidatePath('/dashboard/invoices');
-    return { message: 'Deleted Invoice.' };
+    await sql`DELETE FROM signatures WHERE id = ${id}`;
+    revalidatePath('/dashboard/signatures');
+    return { message: 'Deleted signature.' };
   } catch (error) {
-    return { message: 'Database Error: Failed to Delete Invoice.'+error };
+    return { message: 'Database Error: Failed to Delete signature.'+error };
   }
 }

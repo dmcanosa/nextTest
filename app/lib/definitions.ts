@@ -70,12 +70,11 @@ export type Customer = {
   image_url: string;
 };
 
-export type Invoice = {
+export type Signature = {
   id: string; // Will be created on the database
-  customer_id: string;
   amount: number; // Stored in cents
   status: 'pending' | 'paid';
-  signature: string;
+  data: string;
   date: string;
 };
 
@@ -84,7 +83,7 @@ export type Revenue = {
   revenue: number;
 };
 
-export type LatestInvoice = {
+export type LatestSignature = {
   id: string;
   name: string;
   image_url: string;
@@ -93,20 +92,19 @@ export type LatestInvoice = {
 };
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
+export type LatestSignatureRaw = Omit<LatestSignature, 'amount'> & {
   amount: number;
 };
 
-export type InvoicesTable = {
+export type SignaturesTable = {
   id: string;
-  customer_id: string;
   name: string;
   email: string;
   image_url: string;
   date: string;
   amount: number;
   status: 'pending' | 'paid';
-  signature: string;
+  data: string;
 };
 
 export type CustomersTableType = {
@@ -114,7 +112,7 @@ export type CustomersTableType = {
   name: string;
   email: string;
   image_url: string;
-  total_invoices: number;
+  total_Signatures: number;
   total_pending: number;
   total_paid: number;
 };
@@ -124,7 +122,7 @@ export type FormattedCustomersTable = {
   name: string;
   email: string;
   image_url: string;
-  total_invoices: number;
+  total_Signatures: number;
   total_pending: string;
   total_paid: string;
 };
@@ -134,7 +132,7 @@ export type CustomerField = {
   name: string;
 };
 
-export type InvoiceForm = {
+export type SignatureForm = {
   id: string;
   customer_id: string;
   amount: number;
