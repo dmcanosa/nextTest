@@ -17,6 +17,17 @@ export const SignupFormSchema = z.object({
     .trim(),
 })
 
+export type SessionPayload = 
+{
+  userId: string,
+  expiresAt: Date,
+  /*httpOnly: boolean,
+  secure: boolean,
+  sameSite: 'lax',
+  path: '/',*/
+}
+| undefined;
+
 export type FormState =
   | {
       errors?: {

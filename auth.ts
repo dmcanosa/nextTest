@@ -32,7 +32,7 @@ export async function signUp(formData:FormData){
  
   const { name, email, password } = validatedFields.data
   const hashedPassword = await bcrypt.hash(password, 10)
-  console.log('getuser: ',await getUser(email));
+  //console.log('getuser: ',await getUser(email));
   const user = await getUser(email);
   if(!user){
     try {
@@ -41,7 +41,8 @@ export async function signUp(formData:FormData){
       if (!newUser) {
         console.log('An error occurred while creating your account.');
       }
-      const data = newUser.rows[0];
+      const data = newUser;
+      return data;
     } catch (error) {
       console.error('Failed to fetch user:', error);
       throw new Error('Failed to fetch user.');
@@ -54,16 +55,20 @@ export const { auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
+        console.log(credentials);
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials);
- 
+          console.log(parsedCredentials);
+        
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
+          console.log(user);
           if (!user) return null;
           const passwordsMatch = await bcrypt.compare(password, user.password);
- 
+          console.log(passwordsMatch);
+          
           if (passwordsMatch) return user;
         }
         
