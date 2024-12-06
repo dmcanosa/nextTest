@@ -5,7 +5,8 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
-import { SignupFormSchema, FormState } from '@/app/lib/definitions';
+import { SignupFormSchema, LoginFormSchema, FormState } from '@/app/lib/definitions';
+//import { createSession } from './app/lib/session';
  
 async function getUser(email: string): Promise<User | undefined> {
   try {
@@ -47,6 +48,28 @@ export async function signUp(formData:FormData){
       console.error('Failed to fetch user:', error);
       throw new Error('Failed to fetch user.');
     }
+  }
+}
+
+export async function login(formData:FormData){
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  })
+  console.log('validatedFields: ',validatedFields);
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    }
+  }
+ 
+  const { email, password } = validatedFields.data
+  const hashedPassword = await bcrypt.hash(password, 10)
+  //console.log('getuser: ',await getUser(email));
+  const user = await getUser(email);
+  if(user){
+    //await createSession(user.id);
+    return user;  
   }
 }
 

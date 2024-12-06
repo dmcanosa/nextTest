@@ -9,8 +9,11 @@ import {
   CardsSkeleton
 } from '@/app/ui/skeletons';
 import CardWrapper from '@/app/ui/dashboard/cards';
+import { getSession } from '@/app/lib/session';
 
 export default async function Page() {
+  //const session = await getSession();
+  //console.log(session);
   //const revenue = await fetchRevenue();
   //const latestInvoices = await fetchLatestInvoices();
   /*const { 

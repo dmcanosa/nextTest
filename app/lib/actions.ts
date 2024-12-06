@@ -3,10 +3,10 @@
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
-import { signUp, signIn } from '@/auth';
+import { signUp, login, signIn } from '@/auth';
 import { AuthError, User } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { createSession } from './session';
+//import { createSession } from './session';
  
 const FormSchema = z.object({
   id: z.string(),
@@ -37,9 +37,12 @@ export async function authenticate(
 ) {
   try {
     const user:User = await signIn('credentials', formData);
+    //const user = await login(formData);
+    console.log('user:',user);
     if(user){
-      createSession(user.id);
-      redirect('/dashboard');  
+      //createSession(user.id);
+      console.log('---->');
+      //redirect('/dashboard');  
     }
   } catch (error) {
     if (error instanceof AuthError) {
@@ -63,7 +66,9 @@ export async function register(
     const data = await signUp(formData);
     //console.log('data: ',data);
     //if(data) redirect('/login');
-    if(data) authenticate('credentials', formData);
+    if(data){
+      await authenticate('credentials', formData);
+    }  
     //await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
