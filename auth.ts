@@ -43,12 +43,15 @@ async function getUser(email: string): Promise<User | undefined> {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const res = await sql`SELECT * FROM users WHERE email=${email}`;
     const user = <User>{};
-    user.id = res[0].id;
-    user.name = res[0].name;
-    user.email = res[0].email;
-    user.password = res[0].password;
-    
-    return user;
+    if(res[0]){
+      user.id = res[0].id;
+      user.name = res[0].name;
+      user.email = res[0].email;
+      user.password = res[0].password;
+      return user;
+    }else{
+      return null;
+    }
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
