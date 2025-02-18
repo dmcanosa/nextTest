@@ -79,6 +79,7 @@ export async function signUp(formData:FormData){
   if(!user){
     try {
       const sql = neon(`${process.env.DATABASE_URL}`);
+      console.log('dburl: ',process.env.DATABASE_URL);
       const newUserRes = await sql`INSERT INTO users (name, email, password) 
         values (${name}, ${email}, ${hashedPassword})`;
       if (!newUserRes) {
