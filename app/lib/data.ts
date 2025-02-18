@@ -1,13 +1,13 @@
 //import { sql } from '@vercel/postgres';
 import { neon } from '@neondatabase/serverless';
-import {
+/*import {
   //CustomerField,
   //CustomersTableType,
   SignatureForm,
   SignaturesTable,
   //LatestSignatureRaw,
   Revenue,
-} from './definitions';
+} from './definitions';*/
 //import { formatCurrency } from './utils';
 
 export async function fetchRevenue() {
@@ -192,6 +192,7 @@ export async function fetchCustomers() {
 
 export async function fetchFilteredCustomers(query: string) {
   try {
+    console.log(query);
     /*const data = await sql<CustomersTableType>`
 		SELECT
 		  customers.id,
