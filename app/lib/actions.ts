@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
-import { signUp, login, signIn } from '@/auth';
+import { signUp, signIn } from '@/auth';
 import { AuthError, User } from 'next-auth';
 import { redirect } from 'next/navigation';
 //import { createSession } from './session';
@@ -41,7 +41,7 @@ export async function authenticate(
     console.log('user:',user);
     if(user){
       //createSession(user.id);
-      console.log('---->');
+      console.log('---->logged in');
       //redirect('/dashboard');  
     }
   } catch (error) {

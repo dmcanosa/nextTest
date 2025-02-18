@@ -7,7 +7,36 @@ import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import { SignupFormSchema, LoginFormSchema, FormState } from '@/app/lib/definitions';
 //import { createSession } from './app/lib/session';
- 
+
+export const { auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  providers: [
+    Credentials({
+      async authorize(credentials) {
+        console.log(credentials);
+        const parsedCredentials = z
+          .object({ email: z.string().email(), password: z.string().min(6) })
+          .safeParse(credentials);
+          console.log(parsedCredentials);
+        
+        if (parsedCredentials.success) {
+          const { email, password } = parsedCredentials.data;
+          const user = await getUser(email);
+          console.log(user);
+          if (!user) return null;
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+          console.log(passwordsMatch);
+          
+          if (passwordsMatch) return user;
+        }
+        
+        console.log('Invalid credentials');
+        return null;
+      },
+    }),
+  ],
+})
+
 async function getUser(email: string): Promise<User | undefined> {
   try {
     const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
@@ -51,7 +80,7 @@ export async function signUp(formData:FormData){
   }
 }
 
-export async function login(formData:FormData){
+/*export async function login(formData:FormData){
   const validatedFields = LoginFormSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
@@ -71,33 +100,45 @@ export async function login(formData:FormData){
     //await createSession(user.id);
     return user;  
   }
-}
+}*/
 
-export const { auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  providers: [
-    Credentials({
-      async authorize(credentials) {
-        console.log(credentials);
-        const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(6) })
-          .safeParse(credentials);
-          console.log(parsedCredentials);
-        
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
-          console.log(user);
-          if (!user) return null;
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-          console.log(passwordsMatch);
-          
-          if (passwordsMatch) return user;
-        }
-        
-        console.log('Invalid credentials');
-        return null;
-      },
-    }),
-  ],
-});
+/* PG
+import NextAuth from "next-auth"
+import PostgresAdapter from "@auth/pg-adapter"
+import { Pool } from "pg"
+ 
+const pool = new Pool({
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+})
+ 
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PostgresAdapter(pool),
+  providers: [],
+})
+*/
+
+/* NEON VERCEL
+import NextAuth from "next-auth"
+import PostgresAdapter from "@auth/pg-adapter"
+import { Pool } from "@neondatabase/serverless"
+ 
+// *DO NOT* create a `Pool` here, outside the request handler.
+// Neon's Postgres cannot keep a pool alive between requests.
+ 
+export const { handlers, auth, signIn, signOut } = NextAuth(() => {
+  // Create a `Pool` inside the request handler.
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+  return {
+    adapter: PostgresAdapter(pool),
+    providers: [],
+  }
+})
+*/
+
+;
