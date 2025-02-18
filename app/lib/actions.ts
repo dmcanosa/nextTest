@@ -1,7 +1,8 @@
 'use server';
 
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
+//import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
 import { signUp, signIn } from '@/auth';
 import { AuthError, User } from 'next-auth';
@@ -65,10 +66,10 @@ export async function register(
     //console.log('formdata: ',formData);
     const data = await signUp(formData);
     //console.log('data: ',data);
-    //if(data) redirect('/login');
-    if(data){
+    if(data) redirect('/dashboard');
+    /*if(data){
       await authenticate('credentials', formData);
-    }  
+    } */ 
     //await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
@@ -104,6 +105,7 @@ export async function createSignature(prevState: State, formData: FormData) {
   //console.log('on actions: '+signature);
 
   try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
     await sql`
       INSERT INTO signatures (amount, status, signature, date)
       VALUES ( ${amountInCents}, ${status}, ${signature}, ${date})
@@ -159,6 +161,7 @@ export async function deleteSignature(id: string) {
   //throw new Error('Failed to Delete Signature');
 
   try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
     await sql`DELETE FROM signatures WHERE id = ${id}`;
     revalidatePath('/dashboard/signatures');
     return { message: 'Deleted signature.' };

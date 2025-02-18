@@ -2,7 +2,8 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+//import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import { SignupFormSchema, LoginFormSchema, FormState } from '@/app/lib/definitions';
@@ -39,8 +40,15 @@ export const { auth, signIn, signOut } = NextAuth({
 
 async function getUser(email: string): Promise<User | undefined> {
   try {
-    const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
-    return user.rows[0];
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const res = await sql`SELECT * FROM users WHERE email=${email}`;
+    const user = <User>{};
+    user.id = res[0].id;
+    user.name = res[0].name;
+    user.email = res[0].email;
+    user.password = res[0].password;
+    
+    return user;
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
@@ -66,12 +74,18 @@ export async function signUp(formData:FormData){
   const user = await getUser(email);
   if(!user){
     try {
-      const newUser = await sql<User>`INSERT INTO users (name, email, password) 
-      values (${name}, ${email}, ${hashedPassword})`;
-      if (!newUser) {
+      const sql = neon(`${process.env.DATABASE_URL}`);
+      const newUserRes = await sql`INSERT INTO users (name, email, password) 
+        values (${name}, ${email}, ${hashedPassword})`;
+      if (!newUserRes) {
         console.log('An error occurred while creating your account.');
       }
-      const data = newUser;
+      const user = <User>{};
+      user.id = newUserRes[0].id;
+      user.name = newUserRes[0].name;
+      user.email = newUserRes[0].email;
+      user.password = newUserRes[0].password;
+      const data = user;
       return data;
     } catch (error) {
       console.error('Failed to fetch user:', error);

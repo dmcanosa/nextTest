@@ -1,27 +1,29 @@
-import { sql } from '@vercel/postgres';
+//import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import {
-  CustomerField,
-  CustomersTableType,
+  //CustomerField,
+  //CustomersTableType,
   SignatureForm,
   SignaturesTable,
-  LatestSignatureRaw,
+  //LatestSignatureRaw,
   Revenue,
 } from './definitions';
-import { formatCurrency } from './utils';
+//import { formatCurrency } from './utils';
 
 export async function fetchRevenue() {
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-     console.log('Fetching revenue data...');
-     await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    
+    const data = await sql`SELECT * FROM revenue`;
 
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
+    console.log('Data fetch completed after 3 seconds.');
 
-     console.log('Data fetch completed after 3 seconds.');
-
-    return data.rows;
+    return data;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch revenue data.');
@@ -30,7 +32,7 @@ export async function fetchRevenue() {
 
 export async function fetchLatestSignatures() {
   try {
-    const data = await sql<LatestSignatureRaw>`
+    /*const data = await sql<LatestSignatureRaw>`
       SELECT Signatures.amount, customers.name, customers.image_url, customers.email, Signatures.id
       FROM Signatures
       JOIN customers ON Signatures.customer_id = customers.id
@@ -41,7 +43,7 @@ export async function fetchLatestSignatures() {
       ...Signature,
       amount: formatCurrency(Signature.amount),
     }));
-    return latestSignatures;
+    return latestSignatures;*/
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch the latest Signatures.');
@@ -53,7 +55,7 @@ export async function fetchCardData() {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const SignatureCountPromise = sql`SELECT COUNT(*) FROM Signatures`;
+    /*const SignatureCountPromise = sql`SELECT COUNT(*) FROM Signatures`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const SignatureStatusPromise = sql`SELECT
          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
@@ -76,7 +78,7 @@ export async function fetchCardData() {
       numberOfSignatures,
       totalPaidSignatures,
       totalPendingSignatures,
-    };
+    };*/
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch card data.');
@@ -91,7 +93,8 @@ export async function fetchFilteredSignatures(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const Signatures = await sql<SignaturesTable>`
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const Signatures = await sql`
       SELECT
         Signatures.id,
         Signatures.amount,
@@ -113,7 +116,7 @@ export async function fetchFilteredSignatures(
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
-    return Signatures.rows;
+    return Signatures;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Signatures.');
@@ -122,6 +125,7 @@ export async function fetchFilteredSignatures(
 
 export async function fetchSignaturesPages(query: string) {
   try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
     FROM Signatures
     JOIN customers ON Signatures.customer_id = customers.id
@@ -133,7 +137,7 @@ export async function fetchSignaturesPages(query: string) {
       Signatures.status ILIKE ${`%${query}%`}
   `;
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(count[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
@@ -143,7 +147,8 @@ export async function fetchSignaturesPages(query: string) {
 
 export async function fetchSignatureById(id: string) {
   try {
-    const data = await sql<SignatureForm>`
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const data = await sql`
       SELECT
         Signatures.id,
         Signatures.customer_id,
@@ -153,7 +158,7 @@ export async function fetchSignatureById(id: string) {
       WHERE Signatures.id = ${id};
     `;
 
-    const Signature = data.rows.map((Signature) => ({
+    const Signature = data.map((Signature) => ({
       ...Signature,
       // Convert amount from cents to dollars
       amount: Signature.amount / 100,
@@ -169,7 +174,7 @@ export async function fetchSignatureById(id: string) {
 
 export async function fetchCustomers() {
   try {
-    const data = await sql<CustomerField>`
+    /*const data = await sql<CustomerField>`
       SELECT
         id,
         name
@@ -178,7 +183,7 @@ export async function fetchCustomers() {
     `;
 
     const customers = data.rows;
-    return customers;
+    return customers;*/
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all customers.');
@@ -187,7 +192,7 @@ export async function fetchCustomers() {
 
 export async function fetchFilteredCustomers(query: string) {
   try {
-    const data = await sql<CustomersTableType>`
+    /*const data = await sql<CustomersTableType>`
 		SELECT
 		  customers.id,
 		  customers.name,
@@ -211,7 +216,7 @@ export async function fetchFilteredCustomers(query: string) {
       total_paid: formatCurrency(customer.total_paid),
     }));
 
-    return customers;
+    return customers;*/
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
