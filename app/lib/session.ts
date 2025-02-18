@@ -76,7 +76,7 @@ export async function getSession() {
   console.log('session: ',session);
   const payload = await decrypt(session);
   console.log('payload: ',payload);
-  const cookieStore = await cookies()
+  //const cookieStore = await cookies()
   //console.log('cookiestore: ',cookieStore);
   
 

@@ -1,15 +1,6 @@
-import RevenueChart from '@/app/ui/dashboard/revenue-chart';
-import LatestSignatures from '@/app/ui/dashboard/latest-Signatures';
 import { lusitana } from '@/app/ui/fonts';
 //import { fetchCardData } from '@/app/lib/data';
-import { Suspense } from 'react';
-import { 
-  RevenueChartSkeleton, 
-  LatestSignaturesSkeleton,
-  CardsSkeleton
-} from '@/app/ui/skeletons';
-import CardWrapper from '@/app/ui/dashboard/cards';
-import { getSession } from '@/app/lib/session';
+//import { getSession } from '@/app/lib/session';
 
 export default async function Page() {
   //const session = await getSession();
