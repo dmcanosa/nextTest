@@ -23,7 +23,7 @@ export const { auth, signIn, signOut } = NextAuth({
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
-          console.log(user);
+          console.log('user auth.js:',user);
           if (!user) return null;
           const passwordsMatch = await bcrypt.compare(password, user.password);
           console.log(passwordsMatch);
@@ -42,6 +42,7 @@ async function getUser(email: string): Promise<User | undefined> {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const res = await sql`SELECT * FROM users WHERE email=${email}`;
+    console.log('res getuser: ',res);
     const user = <User>{};
     if(res[0]){
       user.id = res[0].id;
