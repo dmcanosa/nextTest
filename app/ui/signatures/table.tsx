@@ -128,7 +128,7 @@ export default async function SignaturesTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateSignature id={signature.id} />
+                      {/*<UpdateSignature id={signature.id} /> */}
                       <DeleteSignature id={signature.id} />
                     </div>
                   </td>

@@ -129,7 +129,7 @@ export async function createSignature(prevState: State, formData: FormData) {
   redirect('/dashboard/signatures');
 }
 
-const UpdateSignature = FormSchema.omit({ id: true, date: true });
+/*const UpdateSignature = FormSchema.omit({ id: true, date: true });
  
 export async function updateSignature(id: string, formData: FormData) {
   const { amount, status } = UpdateSignature.parse({
@@ -153,7 +153,7 @@ export async function updateSignature(id: string, formData: FormData) {
  
   revalidatePath('/dashboard/signatures');
   redirect('/dashboard/signatures');
-}
+}*/
 
 export async function deleteSignature(id: string) {
   //throw new Error('Failed to Delete Signature');
