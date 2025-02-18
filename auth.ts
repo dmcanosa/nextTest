@@ -83,9 +83,9 @@ export async function signUp(formData:FormData){
       const newUserRes = await sql`INSERT INTO users (name, email, password) 
         values (${name}, ${email}, ${hashedPassword})`;
         console.log('data signup: ',newUserRes); 
-      if (newUserRes[0].errors) {
+      if (newUserRes.length == 0 || (newUserRes.length > 0 && newUserRes[0].errors)) {
         console.log('An error occurred while creating your account.');
-        return newUserRes[0];
+        return newUserRes;
       }else{
         const user = <User>{};
         user.id = newUserRes[0].id;
