@@ -82,16 +82,20 @@ export async function signUp(formData:FormData){
       console.log('dburl: ',process.env.DATABASE_URL);
       const newUserRes = await sql`INSERT INTO users (name, email, password) 
         values (${name}, ${email}, ${hashedPassword})`;
-      if (!newUserRes) {
+        console.log('data signup: ',newUserRes); 
+      if (newUserRes[0].errors) {
         console.log('An error occurred while creating your account.');
+        return newUserRes[0];
+      }else{
+        const user = <User>{};
+        user.id = newUserRes[0].id;
+        user.name = newUserRes[0].name;
+        user.email = newUserRes[0].email;
+        user.password = newUserRes[0].password;
+        const data = user;
+        return data;
       }
-      const user = <User>{};
-      user.id = newUserRes[0].id;
-      user.name = newUserRes[0].name;
-      user.email = newUserRes[0].email;
-      user.password = newUserRes[0].password;
-      const data = user;
-      return data;
+
     } catch (error) {
       console.error('Failed to fetch user:', error);
       throw new Error('Failed to fetch user.');
