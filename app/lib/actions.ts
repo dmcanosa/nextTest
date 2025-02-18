@@ -67,10 +67,10 @@ export async function register(
     const data = await signUp(formData);
     console.log('data signup: ',data);
     //console.log('data: ',data);
-    if(data) redirect('/dashboard');
-    /*if(data){
+    //if(data) redirect('/dashboard');
+    if(data){
       await authenticate('credentials', formData);
-    } */ 
+    }  
     //await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
