@@ -95,24 +95,10 @@ export async function fetchFilteredSignatures(
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
-      SELECT
-        Signatures.id,
-        Signatures.amount,
-        Signatures.date,
-        Signatures.status,
-        Signatures.signature,
-        customers.name,
-        customers.email,
-        customers.image_url
-      FROM Signatures
-      JOIN customers ON Signatures.customer_id = customers.id
+      SELECT *
+      FROM signatures
       WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        Signatures.amount::text ILIKE ${`%${query}%`} OR
-        Signatures.date::text ILIKE ${`%${query}%`} OR
-        Signatures.status ILIKE ${`%${query}%`}
-      ORDER BY Signatures.date DESC
+        active = true 
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -127,6 +113,9 @@ export async function fetchSignaturesPages(query: string) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
+      FROM signatures where active = true
+    `;  
+    /*const count = await sql`SELECT COUNT(*)
     FROM Signatures
     JOIN customers ON Signatures.customer_id = customers.id
     WHERE
@@ -135,7 +124,7 @@ export async function fetchSignaturesPages(query: string) {
       Signatures.amount::text ILIKE ${`%${query}%`} OR
       Signatures.date::text ILIKE ${`%${query}%`} OR
       Signatures.status ILIKE ${`%${query}%`}
-  `;
+  `;*/
 
     const totalPages = Math.ceil(Number(count[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -149,11 +138,7 @@ export async function fetchSignatureById(id: string) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const data = await sql`
-      SELECT
-        Signatures.id,
-        Signatures.customer_id,
-        Signatures.amount,
-        Signatures.status
+      SELECT *
       FROM Signatures
       WHERE Signatures.id = ${id};
     `;

@@ -11,12 +11,13 @@ import { redirect } from 'next/navigation';
  
 const FormSchema = z.object({
   id: z.string(),
-  customerId: z.string({ invalid_type_error: 'Please select a customer.' }),
-  amount: z.coerce
+  //customerId: z.string({ invalid_type_error: 'Please select a customer.' }),
+  /*amount: z.coerce
             .number()
             .gt(0, { message: 'Please enter an amount greater than $0.' }),
   status: z.enum(['pending', 'paid'], { invalid_type_error: 'Please select an Signature status.' }),
-  signature: z.string(),
+  */
+  data: z.string(),
   date: z.string(),
 });
  
@@ -24,10 +25,10 @@ const CreateSignature = FormSchema.omit({ id: true, date: true });
 
 export type State = {
   errors?: {
-    customerId?: string[];
-    amount?: string[];
-    signature?: string[];
-    status?: string[];
+    //customerId?: string[];
+    //amount?: string[];
+    data?: string[];
+    //status?: string[];
   };
   message?: string | null;
 };
@@ -94,9 +95,9 @@ export async function register(
 
 export async function createSignature(prevState: State, formData: FormData) {
   const validatedFields = CreateSignature.safeParse({
-    amount: formData.get('amount'),
-    signature: formData.get('canvasString'),
-    status: formData.get('status'),
+    //amount: formData.get('amount'),
+    data: formData.get('canvasString'),
+    //status: formData.get('status'),
   });
 
   if (!validatedFields.success) {
@@ -106,8 +107,8 @@ export async function createSignature(prevState: State, formData: FormData) {
     };
   }
 
-  const { amount, status, signature } = validatedFields.data;
-  const amountInCents = amount * 100;
+  //const { signature } = validatedFields.data;
+  //const amountInCents = amount * 100;
   const date = new Date().toISOString().split('T')[0];
   
   //console.log('on actions: '+signature);
@@ -115,8 +116,8 @@ export async function createSignature(prevState: State, formData: FormData) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     await sql`
-      INSERT INTO signatures (amount, status, signature, date)
-      VALUES ( ${amountInCents}, ${status}, ${signature}, ${date})
+      INSERT INTO signatures (data, created, active)
+      VALUES ( ${validatedFields.data}, ${date}, true)
     `;
   } catch (error) {
     return {
