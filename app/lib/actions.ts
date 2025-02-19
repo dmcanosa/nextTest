@@ -68,10 +68,14 @@ export async function register(
     console.log('data signup: ',data);
     //console.log('data: ',data);
     //if(data) redirect('/dashboard');
-    if(data && (data && data[0] && !data[0].errors)){
-      await authenticate('credentials', formData);
+    if(data){ //&& (data && data[0] && !data[0].errors)){
+      if(data[0] && data[0].errors){
+        console.log('data signup else: ',data);
+      }else{
+        await authenticate('credentials', formData);
+      }  
     }else{
-      console.log('data signup: ',data);
+      console.log('data signup else: ',data);
     
     }  
     //await signIn('credentials', formData);
