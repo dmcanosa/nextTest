@@ -92,7 +92,7 @@ export async function fetchFilteredSignatures(
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
+  console.log(query);
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
@@ -112,6 +112,7 @@ export async function fetchFilteredSignatures(
 
 export async function fetchSignaturesPages(query: string) {
   try {
+    console.log(query);
     const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
       FROM signatures where active = true
@@ -146,12 +147,12 @@ export async function fetchSignatureById(id: string) {
 
     const Signature = data.map((Signature) => ({
       ...Signature,
-      // Convert amount from cents to dollars
-      amount: Signature.amount / 100,
+      /*amount: Signature.amount / 100,*/
     }));
 
     console.log(Signature); // Signature is an empty array []
-    return Signature[0];
+    //return Signature[0];
+    return data[0];
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Signature.');

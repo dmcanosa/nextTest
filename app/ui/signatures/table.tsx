@@ -25,7 +25,7 @@ export default async function SignaturesTable({
               >
                 <div className="flex items-center justify-between border-b pb-4">
                   {signature.data &&
-                    <img 
+                    <Image 
                       src={signature.data.split('==')[0]}
                       width={128}
                       height={96}
@@ -74,7 +74,7 @@ export default async function SignaturesTable({
                 >
                   <td className="whitespace-nowrap px-3 py-3">
                     { signature.data &&
-                      <img 
+                      <Image 
                         src={signature.data.split('==')[0]}
                         width={128}
                         height={96}
