@@ -28,7 +28,10 @@ export const { auth, signIn, signOut } = NextAuth({
           const passwordsMatch = await bcrypt.compare(password, user.password);
           console.log(passwordsMatch);
           
-          if (passwordsMatch) return user;
+          if (passwordsMatch){
+            //Window.localStorage.setItem('user_email', user.email); 
+            return user;
+          }
         }
         
         console.log('Invalid credentials');
@@ -38,7 +41,7 @@ export const { auth, signIn, signOut } = NextAuth({
   ],
 })
 
-async function getUser(email: string): Promise<User | undefined> {
+export async function getUser(email: string): Promise<User | undefined> {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const res = await sql`SELECT * FROM users WHERE email=${email}`;

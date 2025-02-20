@@ -72,10 +72,10 @@ export type Customer = {
 
 export type Signature = {
   id: string; // Will be created on the database
-  amount: number; // Stored in cents
-  status: 'pending' | 'paid';
+  active: boolean;
   data: string;
-  date: string;
+  created: string;
+  user_id: string;
 };
 
 export type Revenue = {

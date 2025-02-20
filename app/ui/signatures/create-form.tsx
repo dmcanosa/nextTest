@@ -2,11 +2,11 @@
 
 import { useActionState } from 'react';
 import Link from 'next/link';
-import {
+/*import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline';*/
 import { Button } from '@/app/ui/button';
 import { createSignature, State } from '@/app/lib/actions';
 import Canvas from '@/app/dashboard/signatures/canvas';
@@ -74,8 +74,8 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
             </div>
           </div>
           <div id="canvas-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.signature &&
-              state.errors.signature.map((error: string) => (
+            {state.errors?.data &&
+              state.errors.data.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}
                 </p>

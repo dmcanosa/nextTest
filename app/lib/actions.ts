@@ -4,9 +4,11 @@ import { z } from 'zod';
 //import { sql } from '@vercel/postgres';
 import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
-import { signUp, signIn } from '@/auth';
-import { AuthError, User } from 'next-auth';
+import { signUp, signIn, getUser } from '@/auth';
+import { AuthError/*, User*/ } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { User } from 'app/lib/definitions';
 //import { createSession } from './session';
  
 const FormSchema = z.object({
@@ -37,11 +39,19 @@ export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
 ) {
+          
   try {
-    const user:User = await signIn('credentials', formData);
+    console.log('authenticate!!!', formData);
+    const cookieStore = await cookies();
+    cookieStore.set('user_email', formData.get('email').valueOf().toString());
+    console.log('cookie: ', cookieStore.get('user_email'));  
+    //en flow de register pasa por aca pero no hace bien el signin
+    const user = await signIn('credentials', formData);
+    console.log('222authenticate!!!', user);
     //const user = await login(formData);
     console.log('user:',user);
     if(user){
+      
       //createSession(user.id);
       console.log('---->logged in');
       //redirect('/dashboard');  
@@ -108,17 +118,22 @@ export async function createSignature(prevState: State, formData: FormData) {
   }
 
   //const { signature } = validatedFields.data;
-  //const amountInCents = amount * 100;
   const date = new Date().toISOString().split('T')[0];
-  
   //console.log('on actions: '+signature);
 
+  const cookieStore = await cookies()
+  //console.log(cookieStore.get('user_email').value);
+  const userEmail:string = cookieStore.get('user_email').value;
+  
   try {
-    const sql = neon(`${process.env.DATABASE_URL}`);
-    await sql`
-      INSERT INTO signatures (data, created, active)
-      VALUES ( ${validatedFields.data}, ${date}, true)
-    `;
+    const user:User = await getUser(userEmail);  
+    if(user){
+      const sql = neon(`${process.env.DATABASE_URL}`);
+      await sql`
+        INSERT INTO signatures (data, created, active, user_id)
+        VALUES ( ${validatedFields.data.data}, ${date}, true, ${user.id})
+      `;
+    }
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create Signature.'+error,
