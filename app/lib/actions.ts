@@ -113,7 +113,7 @@ export async function createSignature(prevState: State, formData: FormData) {
   }
 
   //const { signature } = validatedFields.data;
-  const date = new Date().toISOString().split('T')[0];
+  //const date = new Date().toISOString().split('T')[0];
   //console.log('on actions: '+signature);
 
   const cookieStore = await cookies()
