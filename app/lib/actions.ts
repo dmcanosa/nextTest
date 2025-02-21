@@ -137,7 +137,7 @@ export async function createSignature(prevState: State, formData: FormData) {
       `;
       await sql`
         INSERT INTO signatures (data, created, active, user_id)
-        VALUES ( ${validatedFields.data.data}, ${date}, true, ${user.id})
+        VALUES ( ${validatedFields.data.data}, NOW(), true, ${user.id})
       `;
     }
   } catch (error) {
