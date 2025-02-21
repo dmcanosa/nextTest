@@ -139,18 +139,7 @@ export async function createSignature(prevState: State, formData: FormData) {
       message: 'Database Error: Failed to Create Signature.'+error,
     };
   }
-
-  /*try {
-    await sql`
-      INSERT INTO signatures (user_id, signature_data)
-      VALUES (${customerId}, ${signature})
-    `;
-  } catch (error) {
-    return {
-      message: 'Database Error: Failed to Create Signature.'+error,
-    };
-  }*/
-
+  
   revalidatePath('/dashboard/signatures');
   redirect('/dashboard/signatures');
 }

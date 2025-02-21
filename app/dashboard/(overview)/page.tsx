@@ -1,10 +1,7 @@
 import { lusitana } from '@/app/ui/fonts';
 //import { fetchCardData } from '@/app/lib/data';
-//import { getSession } from '@/app/lib/session';
 
 export default async function Page() {
-  //const session = await getSession();
-  //console.log(session);
   //const revenue = await fetchRevenue();
   //const latestSignatures = await fetchLatestSignatures();
   /*const { 
