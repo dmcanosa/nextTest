@@ -86,7 +86,7 @@ export async function signUp(formData:FormData){
       const newUserRes = await sql`INSERT INTO users (name, email, password) 
         values (${name}, ${email}, ${hashedPassword})`;
       console.log('data SIGNUP: ',newUserRes);
-      console.log('errors: ',newUserRes[0]);    
+      //console.log('errors: ',newUserRes[0]);    
       
       const dbuser = await getUser(email);
       console.log('dbuser: ',dbuser);
