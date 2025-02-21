@@ -79,12 +79,15 @@ export async function register(
     console.log('data signup register: ',data);
     console.log('errors: ',data['errors']);    
     if(data['errors']){
-      console.log('errors if: ',data['errors'].password);
-      return data['errors'].password[0];
-      data['errors'].password.map((error:string) => {
-        console.log('for each error: ',error);  
-        return 'error as string';
-      });  
+      if(data['errors'].password){
+        return data['errors'].password[0];    
+      }else if(data['errors'].name){
+        return data['errors'].name[0];    
+      }else if(data['errors'].email){
+        return data['errors'].email[0];    
+      }
+      //console.log('errors if: ',data['errors'].password);
+      //return data['errors'].password[0];
     }else{
       console.log('errors else:');
       await authenticate('credentials', formData);
