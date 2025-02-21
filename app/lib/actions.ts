@@ -78,7 +78,7 @@ export async function register(
     const data = await signUp(formData);
     console.log('data signup register: ',data);
     
-    if(data['errors']){
+    if(data && data['errors']){
       return Object.values(data['errors'])[0][0];
     }else{
       console.log('errors else:');
