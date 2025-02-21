@@ -122,8 +122,8 @@ export async function createSignature(prevState: State, formData: FormData) {
   //console.log('on actions: '+signature);
 
   const cookieStore = await cookies()
-  //console.log(cookieStore.get('user_email').value);
   const userEmail:string = cookieStore.get('user_email').value;
+  //console.log(cookieStore.get('user_email').value);
   
   try {
     const user:User = await getUser(userEmail);  
@@ -139,7 +139,7 @@ export async function createSignature(prevState: State, formData: FormData) {
       message: 'Database Error: Failed to Create Signature.'+error,
     };
   }
-  
+
   revalidatePath('/dashboard/signatures');
   redirect('/dashboard/signatures');
 }
@@ -175,7 +175,8 @@ export async function deleteSignature(id: string) {
 
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
-    await sql`DELETE FROM signatures WHERE id = ${id}`;
+    //await sql`DELETE FROM signatures WHERE id = ${id}`;
+    await sql`UPDATE signatures SET active = false WHERE id = ${id}`;
     revalidatePath('/dashboard/signatures');
     return { message: 'Deleted signature.' };
   } catch (error) {

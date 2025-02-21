@@ -1,4 +1,7 @@
 import { neon } from '@neondatabase/serverless';
+import { cookies } from 'next/headers';
+import { User } from 'app/lib/definitions';
+import { getUser } from '@/auth';
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredSignatures(
@@ -8,10 +11,13 @@ export async function fetchFilteredSignatures(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   console.log(query);
   try {
+    const cookieStore = await cookies()
+    const userEmail:string = cookieStore.get('user_email').value;
+    const user:User = await getUser(userEmail);  
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
       SELECT *
-      FROM signatures
+      FROM signatures WHERE user_id = ${user.id}
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -25,9 +31,13 @@ export async function fetchFilteredSignatures(
 export async function fetchSignaturesPages(query: string) {
   try {
     console.log(query);
+    const cookieStore = await cookies()
+    const userEmail:string = cookieStore.get('user_email').value;
+    const user:User = await getUser(userEmail);  
+    
     const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
-      FROM signatures 
+      FROM signatures WHERE user_id = ${user.id}
     `;  
     
     const totalPages = Math.ceil(Number(count[0].count) / ITEMS_PER_PAGE);
