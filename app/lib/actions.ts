@@ -77,15 +77,10 @@ export async function register(
     //console.log('formdata: ',formData);
     const data = await signUp(formData);
     console.log('data signup register: ',data);
-    console.log('errors: ',data['errors']);    
+    console.log('errors: ', Object.keys(data['errors']).length);
+
     if(data['errors']){
-      if(data['errors'].password){
-        return data['errors'].password[0];    
-      }else if(data['errors'].name){
-        return data['errors'].name[0];    
-      }else if(data['errors'].email){
-        return data['errors'].email[0];    
-      }
+      return Object.values(data['errors'])[0][0];
     }else{
       console.log('errors else:');
       await authenticate('credentials', formData);
