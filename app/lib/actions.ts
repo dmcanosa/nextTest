@@ -86,25 +86,10 @@ export async function register(
       }else if(data['errors'].email){
         return data['errors'].email[0];    
       }
-      //console.log('errors if: ',data['errors'].password);
-      //return data['errors'].password[0];
     }else{
       console.log('errors else:');
       await authenticate('credentials', formData);
     }  
-    //console.log('data: ',data);
-    //if(data) redirect('/dashboard');
-    /*if(data){ //&& (data && data[0] && !data[0].errors)){
-      if(data[0] && data[0].errors){
-        console.log('data signup if: ',data);
-      }else{
-        await authenticate('credentials', formData);
-      }  
-    }else{
-      console.log('data signup else: ',data);
-    
-    }*/ 
-    //await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -144,6 +129,12 @@ export async function createSignature(prevState: State, formData: FormData) {
     const user:User = await getUser(userEmail);  
     if(user){
       const sql = neon(`${process.env.DATABASE_URL}`);
+      await sql`
+        UPDATE signatures 
+          SET active = false 
+          WHERE user_id = ${user.id}
+          AND active = true
+      `;
       await sql`
         INSERT INTO signatures (data, created, active, user_id)
         VALUES ( ${validatedFields.data.data}, ${date}, true, ${user.id})

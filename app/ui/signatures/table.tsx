@@ -62,7 +62,7 @@ export default async function SignaturesTable({
                   Date
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  <span className="sr-only">Edit</span>
+                  Set inactive
                 </th>
               </tr>
             </thead>
@@ -96,7 +96,9 @@ export default async function SignaturesTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       {/*<UpdateSignature id={signature.id} /> */}
-                      <DeleteSignature id={signature.id} />
+                      {signature.active &&  
+                        <DeleteSignature id={signature.id} />
+                      }
                     </div>
                   </td>
                 </tr>
