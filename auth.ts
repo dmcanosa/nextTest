@@ -85,10 +85,17 @@ export async function signUp(formData:FormData){
       console.log('dburl: ',process.env.DATABASE_URL);
       const newUserRes = await sql`INSERT INTO users (name, email, password) 
         values (${name}, ${email}, ${hashedPassword})`;
-      console.log('data signup: ',newUserRes);
+      console.log('data SIGNUP: ',newUserRes);
+      console.log('errors: ',newUserRes[0]);    
+      
       const dbuser = await getUser(email);
+      console.log('dbuser: ',dbuser);
+      //if (/*newUserRes.length > 0 &&*/ newUserRes['errors']){
+      //  console.log('errors!');    
+      //}
       if(!dbuser){
-      //if (newUserRes.length == 0 || (newUserRes.length > 0 && newUserRes[0].errors)) {
+        
+        
         console.log('An error occurred while creating your account.');
         return null;
       }else{

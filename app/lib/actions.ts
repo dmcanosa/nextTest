@@ -76,19 +76,31 @@ export async function register(
   try {
     //console.log('formdata: ',formData);
     const data = await signUp(formData);
-    console.log('data signup: ',data);
+    console.log('data signup register: ',data);
+    console.log('errors: ',data['errors']);    
+    if(data['errors']){
+      console.log('errors if: ',data['errors'].password);
+      return data['errors'].password[0];
+      data['errors'].password.map((error:string) => {
+        console.log('for each error: ',error);  
+        return 'error as string';
+      });  
+    }else{
+      console.log('errors else:');
+      await authenticate('credentials', formData);
+    }  
     //console.log('data: ',data);
     //if(data) redirect('/dashboard');
-    if(data){ //&& (data && data[0] && !data[0].errors)){
+    /*if(data){ //&& (data && data[0] && !data[0].errors)){
       if(data[0] && data[0].errors){
-        console.log('data signup else: ',data);
+        console.log('data signup if: ',data);
       }else{
         await authenticate('credentials', formData);
       }  
     }else{
       console.log('data signup else: ',data);
     
-    }  
+    }*/ 
     //await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
