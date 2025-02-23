@@ -3,6 +3,7 @@ import { DeleteSignature } from '@/app/ui/signatures/buttons';
 //import SignatureStatus from '@/app/ui/signatures/status';
 //import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredSignatures } from '@/app/lib/data';
+import NextCrypto from 'next-crypto';
 
 export default async function SignaturesTable({
   query,
@@ -11,7 +12,20 @@ export default async function SignaturesTable({
   query: string;
   currentPage: number;
 }) {
+  //const [decryptedSignatures, setDecryptedSignatures] = useState([]);  
   const signatures = await fetchFilteredSignatures(query, currentPage);
+
+  const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+  //var decryptedSignatures = [];
+  /*signatures.map( async (sig) => {
+    const decrypted = await crypto.decrypt(sig.data);
+    sig.data = decrypted;
+    //setDecryptedSignatures([...decryptedSignatures, sig]);
+    //console.log('decrypted signature', decryptedSignatures.length);
+    //console.log('decrypted signatures: ', decryptedSignatures);
+  });*/
+  
+  //console.log('decrypted signatures: ', decryptedSignatures);
 
   return (
     <div className="mt-6 flow-root">

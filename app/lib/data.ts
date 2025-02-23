@@ -2,6 +2,7 @@ import { neon } from '@neondatabase/serverless';
 import { cookies } from 'next/headers';
 import { User } from 'app/lib/definitions';
 import { getUser } from '@/auth';
+import NextCrypto from 'next-crypto';
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredSignatures(
@@ -11,8 +12,13 @@ export async function fetchFilteredSignatures(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   console.log(query);
   try {
-    const cookieStore = await cookies()
-    const userEmail:string = cookieStore.get('user_email').value;
+    const cookieStore = await cookies();
+
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const userEmail:string = decrypted;
     const user:User = await getUser(userEmail);  
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
@@ -32,7 +38,13 @@ export async function fetchSignaturesPages(query: string) {
   try {
     console.log(query);
     const cookieStore = await cookies()
-    const userEmail:string = cookieStore.get('user_email').value;
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const userEmail:string = decrypted;
+    
+    //const userEmail:string = cookieStore.get('user_email').value;
     const user:User = await getUser(userEmail);  
     
     const sql = neon(`${process.env.DATABASE_URL}`);

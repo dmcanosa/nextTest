@@ -48,6 +48,9 @@ importers:
       next-auth:
         specifier: 5.0.0-beta.25
         version: 5.0.0-beta.25(next@15.0.3(react-dom@19.0.0-rc-cd22717c-20241013(react@19.0.0-rc-cd22717c-20241013))(react@19.0.0-rc-cd22717c-20241013))(react@19.0.0-rc-cd22717c-20241013)
+      next-crypto:
+        specifier: ^1.0.8
+        version: 1.0.8
       postcss:
         specifier: 8.4.38
         version: 8.4.38
@@ -1368,6 +1371,9 @@ packages:
         optional: true
       nodemailer:
         optional: true
+
+  next-crypto@1.0.8:
+    resolution: {integrity: sha512-6VcrH+xFuuCRGCdDMjFFibhJ97c4s+J/6SEV73RUYJhh38MDW4WXNZNTWIMZBq0B29LOIfAQ0XA37xGUZZCCjA==}
 
   next@15.0.3:
     resolution: {integrity: sha512-ontCbCRKJUIoivAdGB34yCaOcPgYXr9AAkV/IwqFfWWTXEPUgLYkSkqBhIk9KK7gGmgjc64B+RdoeIDM13Irnw==}
@@ -3460,6 +3466,8 @@ snapshots:
       '@auth/core': 0.37.2
       next: 15.0.3(react-dom@19.0.0-rc-cd22717c-20241013(react@19.0.0-rc-cd22717c-20241013))(react@19.0.0-rc-cd22717c-20241013)
       react: 19.0.0-rc-cd22717c-20241013
+
+  next-crypto@1.0.8: {}
 
   next@15.0.3(react-dom@19.0.0-rc-cd22717c-20241013(react@19.0.0-rc-cd22717c-20241013))(react@19.0.0-rc-cd22717c-20241013):
     dependencies:
