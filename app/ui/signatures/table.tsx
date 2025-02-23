@@ -16,23 +16,24 @@ export default async function SignaturesTable({
   const signatures = await fetchFilteredSignatures(query, currentPage);
 
   const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-  //var decryptedSignatures = [];
-  /*signatures.map( async (sig) => {
+  var decryptedSignatures = [];
+  await Promise.all(signatures.map( async (sig) => {
     const decrypted = await crypto.decrypt(sig.data);
     sig.data = decrypted;
     //setDecryptedSignatures([...decryptedSignatures, sig]);
+    decryptedSignatures.push(sig);
     //console.log('decrypted signature', decryptedSignatures.length);
     //console.log('decrypted signatures: ', decryptedSignatures);
-  });*/
+  }));
   
-  //console.log('decrypted signatures: ', decryptedSignatures);
+  console.log('decrypted signatures: ', decryptedSignatures);
 
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           <div className="md:hidden">
-            {signatures?.map((signature) => (
+            {decryptedSignatures?.map((signature) => (
               <div
                 key={signature.id}
                 className="mb-2 w-full rounded-md bg-white p-4"
@@ -81,7 +82,7 @@ export default async function SignaturesTable({
               </tr>
             </thead>
             <tbody className="bg-white">
-              {signatures?.map((signature) => (
+              {decryptedSignatures?.map((signature) => (
                 <tr
                   key={signature.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"

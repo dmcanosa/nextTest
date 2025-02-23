@@ -135,8 +135,8 @@ export async function createSignature(prevState: State, formData: FormData) {
   //console.log(cookieStore.get('user_email').value);
   console.log('useremail: ', userEmail);
   //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-  //const signature = await crypto.encrypt(validatedFields.data.data);
-  const signature = validatedFields.data.data;
+  const signature = await crypto.encrypt(validatedFields.data.data);
+  //const signature = validatedFields.data.data;
 
   try {
     const user:User = await getUser(userEmail);  
