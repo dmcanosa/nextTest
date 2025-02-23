@@ -10,8 +10,7 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { User } from 'app/lib/definitions';
 import NextCrypto from 'next-crypto';
-//import { createSession } from './session';
- 
+
 const FormSchema = z.object({
   id: z.string(),
   //customerId: z.string({ invalid_type_error: 'Please select a customer.' }),
@@ -45,24 +44,16 @@ export async function authenticate(
   try {
     console.log('authenticate!!!', formData);
     const cookieStore = await cookies();
-    
-    //crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const encrypted = await crypto.encrypt(formData.get('email').valueOf().toString());
     
     //cookieStore.set('user_email', formData.get('email').valueOf().toString());
     cookieStore.set('user_email', encrypted);
-    //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
-    
-    //console.log('cookie: ', cookieStore.get('user_email'));  
-    //console.log('cookie decrypted: ', decrypted);  
     //en flow de register pasa por aca pero no hace bien el signin
     const user = await signIn('credentials', formData);
     console.log('222authenticate!!!', user);
     //const user = await login(formData);
     console.log('user:',user);
     if(user){
-      
-      //createSession(user.id);
       console.log('---->logged in');
       //redirect('/dashboard');  
     }
@@ -121,20 +112,13 @@ export async function createSignature(prevState: State, formData: FormData) {
     };
   }
 
-  //const { signature } = validatedFields.data;
-  //const date = new Date().toISOString().split('T')[0];
-  //console.log('on actions: '+signature);
-
   const cookieStore = await cookies()
-  //crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
   const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
 
   //const userEmail:string = cookieStore.get('user_email').value;
   const userEmail:string = decrypted;
     
-  //console.log(cookieStore.get('user_email').value);
   console.log('useremail: ', userEmail);
-  //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
   const signature = await crypto.encrypt(validatedFields.data.data);
   //const signature = validatedFields.data.data;
 
