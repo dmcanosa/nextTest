@@ -15,7 +15,7 @@ export default async function SignaturesTable({
   const signatures = await fetchFilteredSignatures(query, currentPage);
 
   const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-  var decryptedSignatures = [];
+  const decryptedSignatures = [];
   await Promise.all(signatures.map( async (sig) => {
     const decrypted = await crypto.decrypt(sig.data);
     sig.data = decrypted;
