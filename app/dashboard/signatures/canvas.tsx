@@ -14,26 +14,26 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   useEffect(() => {
     //setDocument(document);
     document.body.addEventListener('touchstart', function (e){
+      console.log('body el: ',e);
       if(e.target == canvasRef.current){
         e.preventDefault();
       }
     }, false);
   
     document.body.addEventListener('touchmove', function (e){
+      console.log('body el: ',e);
       if(e.target == canvasRef.current){
         e.preventDefault();
       }
     }, false);
   
     document.body.addEventListener('touchend', function (e){
+      console.log('body el: ',e);
       if(e.target == canvasRef.current){
         e.preventDefault();
       }
     }, false);
-    
-
   }, []);
-
   
   const handleMouseDown = (e: SyntheticEvent) => {
     console.log('mouse Down ',(e.nativeEvent as MouseEvent).offsetX+' '+(e.nativeEvent as MouseEvent).offsetY);
