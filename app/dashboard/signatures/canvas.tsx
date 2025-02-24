@@ -9,7 +9,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   const [mouseDownPoint, setMouseDownPoint] = useState({x: 0, y: 0});
   const canvasRef = useRef(null);
 
-  document.body.addEventListener('touchstart', function (e){
+  /*document.body.addEventListener('touchstart', function (e){
     if(e.target == canvasRef.current){
       e.preventDefault();
     }
@@ -25,7 +25,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
     if(e.target == canvasRef.current){
       e.preventDefault();
     }
-  }, false);
+  }, false);*/
   
   const handleMouseDown = (e: SyntheticEvent) => {
     console.log('mouse Down ',(e.nativeEvent as MouseEvent).offsetX+' '+(e.nativeEvent as MouseEvent).offsetY);
