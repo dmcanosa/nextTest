@@ -54,8 +54,8 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   };
 
   const handleTouchStart = (e: TouchEvent) => {
-    let touch = e.touches[0];
-    let me:MouseEvent = new MouseEvent('mousedown', {
+    const touch = e.touches[0];
+    const me:MouseEvent = new MouseEvent('mousedown', {
       clientX : touch.clientX,
       clientY : touch.clientY,
     })
@@ -63,8 +63,8 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   };
   
   const handleTouchMove = (e: TouchEvent) => {
-    let touch = e.touches[0];
-    let me:MouseEvent = new MouseEvent('mousemove', {
+    const touch = e.touches[0];
+    const me:MouseEvent = new MouseEvent('mousemove', {
       clientX : touch.clientX,
       clientY : touch.clientY,
     })
@@ -72,8 +72,8 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   };
   
   const handleTouchEnd = (e: TouchEvent) => {
-    let touch = e.touches[0];
-    let me:MouseEvent = new MouseEvent('mouseup', {
+    const touch = e.touches[0];
+    const me:MouseEvent = new MouseEvent('mouseup', {
       clientX : touch.clientX,
       clientY : touch.clientY,
     })
