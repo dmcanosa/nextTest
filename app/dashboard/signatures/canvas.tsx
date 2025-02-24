@@ -1,4 +1,4 @@
-import React, { useState, useRef, SyntheticEvent, TouchEvent } from 'react';
+import React, { useState, useRef, useEffect, SyntheticEvent, TouchEvent } from 'react';
 
 type CanvasProps = {
   saveCanvas: (s:string) => void;
@@ -9,23 +9,29 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   const [mouseDownPoint, setMouseDownPoint] = useState({x: 0, y: 0});
   const canvasRef = useRef(null);
 
-  /*document.body.addEventListener('touchstart', function (e){
+  const [_document, setDocument] = React.useState(null)
+
+  useEffect(() => {
+    setDocument(document);
+  }, []);
+
+  _document.body.addEventListener('touchstart', function (e){
     if(e.target == canvasRef.current){
       e.preventDefault();
     }
   }, false);
 
-  document.body.addEventListener('touchmove', function (e){
+  _document.body.addEventListener('touchmove', function (e){
     if(e.target == canvasRef.current){
       e.preventDefault();
     }
   }, false);
 
-  document.body.addEventListener('touchend', function (e){
+  _document.body.addEventListener('touchend', function (e){
     if(e.target == canvasRef.current){
       e.preventDefault();
     }
-  }, false);*/
+  }, false);
   
   const handleMouseDown = (e: SyntheticEvent) => {
     console.log('mouse Down ',(e.nativeEvent as MouseEvent).offsetX+' '+(e.nativeEvent as MouseEvent).offsetY);
