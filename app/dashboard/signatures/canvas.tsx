@@ -1,4 +1,4 @@
-import React, { useState, useRef, SyntheticEvent } from 'react';
+import React, { useState, useRef, SyntheticEvent, TouchEvent } from 'react';
 
 type CanvasProps = {
   saveCanvas: (s:string) => void;
@@ -53,6 +53,33 @@ export default function Canvas( {saveCanvas}: CanvasProps){
     saveCanvas(b64);
   };
 
+  const handleTouchStart = (e: TouchEvent) => {
+    var touch = e.touches[0];
+    var me:MouseEvent = new MouseEvent('mousedown', {
+      clientX : touch.clientX,
+      clientY : touch.clientY,
+    })
+    canvasRef.current.dispatchEvent(me);
+  };
+  
+  const handleTouchMove = (e: TouchEvent) => {
+    var touch = e.touches[0];
+    var me:MouseEvent = new MouseEvent('mousemove', {
+      clientX : touch.clientX,
+      clientY : touch.clientY,
+    })
+    canvasRef.current.dispatchEvent(me);
+  };
+  
+  const handleTouchEnd = (e: TouchEvent) => {
+    var touch = e.touches[0];
+    var me:MouseEvent = new MouseEvent('mouseup', {
+      clientX : touch.clientX,
+      clientY : touch.clientY,
+    })
+    canvasRef.current.dispatchEvent(me);
+  };
+  
   return (
     <canvas
       ref={ canvasRef }
@@ -63,6 +90,9 @@ export default function Canvas( {saveCanvas}: CanvasProps){
       onMouseDown={ handleMouseDown }
       onMouseMove={ handleMouseMove }
       onMouseUp={ handleMouseUp }
+      onTouchStart={ handleTouchStart }
+      onTouchMove={ handleTouchMove }
+      onTouchEnd={ handleTouchEnd }
     />
   );
 }
