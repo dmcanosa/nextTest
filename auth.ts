@@ -6,7 +6,7 @@ import { neon } from '@neondatabase/serverless';
 //import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
-import { SignupFormSchema, LoginFormSchema, FormState } from '@/app/lib/definitions';
+import { SignupFormSchema } from '@/app/lib/definitions';
 //import { createSession } from './app/lib/session';
 
 export const { auth, signIn, signOut } = NextAuth({
@@ -67,6 +67,7 @@ export async function signUp(formData:FormData){
     name: formData.get('name'),
     email: formData.get('email'),
     password: formData.get('password'),
+    password2: formData.get('password2'),
   })
  
   if (!validatedFields.success) {
@@ -75,7 +76,7 @@ export async function signUp(formData:FormData){
     }
   }
  
-  const { name, email, password } = validatedFields.data
+  const { name, email, password, password2 } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10)
   //console.log('getuser: ',await getUser(email));
   const user = await getUser(email);
