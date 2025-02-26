@@ -15,6 +15,26 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createSignature, initialState);
   
+  console.log('body on canvas: ', document.body);
+
+  document.body.addEventListener('touchstart', (e) => {
+    if(e.target == document.getElementById('formCanvas')){
+      e.preventDefault();
+    }
+  }, false);
+
+  document.body.addEventListener('touchend', (e) => {
+    if(e.target == document.getElementById('formCanvas')){
+      e.preventDefault();
+    }
+  }, false);
+
+  document.body.addEventListener('touchmove', (e) => {
+    if(e.target == document.getElementById('formCanvas')){
+      e.preventDefault();
+    }
+  }, false);
+
   const saveCanvas = (s:string):void => {
     console.log('saveCanvas!');
     const inputCanvas = document.getElementById('canvasString') as HTMLInputElement;
@@ -68,6 +88,7 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <Canvas
+                id= {'formCanvas'}
                 saveCanvas = {saveCanvas}  
               />
               <input type='hidden' name='canvasString' id='canvasString'></input>

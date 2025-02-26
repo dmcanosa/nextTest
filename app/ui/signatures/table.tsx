@@ -20,6 +20,9 @@ export default async function SignaturesTable({
     const decrypted = await crypto.decrypt(sig.data);
     sig.data = decrypted;
     sig.key = sig.id;
+    const date = new Date(sig.created);
+    
+    sig.created = date;
     decryptedSignatures.push(sig);
   }));
   

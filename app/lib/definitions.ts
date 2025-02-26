@@ -101,11 +101,11 @@ export type Revenue = {
 };
 
 export type LatestSignature = {
-  id: string;
-  name: string;
-  image_url: string;
-  email: string;
-  amount: string;
+  id: string; // Will be created on the database
+  active: boolean;
+  data: string;
+  created: string;
+  user_id: string;
 };
 
 // The database returns a number for amount, but we later format it to a string with the formatCurrency function
@@ -115,13 +115,9 @@ export type LatestSignatureRaw = Omit<LatestSignature, 'amount'> & {
 
 export type SignaturesTable = {
   id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  date: string;
-  amount: number;
-  status: 'pending' | 'paid';
   data: string;
+  active: boolean;
+  created: string;
 };
 
 export type CustomersTableType = {
@@ -151,7 +147,5 @@ export type CustomerField = {
 
 export type SignatureForm = {
   id: string;
-  customer_id: string;
-  amount: number;
-  status: 'pending' | 'paid';
+  data: string;
 };

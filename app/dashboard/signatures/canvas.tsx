@@ -1,13 +1,18 @@
+'use client';
+
 import React, { useState, useRef, useEffect, SyntheticEvent, TouchEvent } from 'react';
 
 type CanvasProps = {
+  id: string;
   saveCanvas: (s:string) => void;
 };
 
-export default function Canvas( {saveCanvas}: CanvasProps){
+export default function Canvas( {id, saveCanvas}: CanvasProps){
   const [mouseDown, setMouseDown] = useState(false);
   const [mouseDownPoint, setMouseDownPoint] = useState({x: 0, y: 0});
   const canvasRef = useRef(null);
+
+  console.log(id);
 
   //const [_document, setDocument] = React.useState(null)
 
