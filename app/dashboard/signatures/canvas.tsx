@@ -15,7 +15,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
 
   useEffect(() => {
     //setDocument(document);
-    document.body.addEventListener('touchstart', function (e){
+    /*document.body.addEventListener('touchstart', function (e){
       console.log('body el: ',e);
       if(e.target == canvasRef.current){
         e.preventDefault();
@@ -34,7 +34,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
       if(e.target == canvasRef.current){
         e.preventDefault();
       }
-    }, false);
+    }, false);*/
   }, []);
   
   const handleMouseDown = (e: SyntheticEvent) => {
@@ -82,6 +82,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   };
 
   const handleTouchStart = (e: TouchEvent) => {
+    e.preventDefault();
     const touch = e.touches[0];
     const me:MouseEvent = new MouseEvent('mousedown', {
       clientX : touch.clientX,
@@ -91,6 +92,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   };
   
   const handleTouchMove = (e: TouchEvent) => {
+    e.preventDefault();
     const touch = e.touches[0];
     const me:MouseEvent = new MouseEvent('mousemove', {
       clientX : touch.clientX,
@@ -100,6 +102,7 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   };
   
   const handleTouchEnd = (e: TouchEvent) => {
+    e.preventDefault();
     const touch = e.touches[0];
     const me:MouseEvent = new MouseEvent('mouseup', {
       clientX : touch.clientX,

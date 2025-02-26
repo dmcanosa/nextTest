@@ -3,9 +3,9 @@ import { cookies } from 'next/headers';
 import { User } from 'app/lib/definitions';
 import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
-import { getSession } from './session';
+//import { getSession } from './session';
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 5;
 export async function fetchFilteredSignatures(
   query: string,
   currentPage: number,
@@ -22,8 +22,8 @@ export async function fetchFilteredSignatures(
     const userEmail:string = decrypted;
     const user:User = await getUser(userEmail);  
     
-    const sessionUser = await getSession();
-    console.log('session user: ', sessionUser);  
+    //const sessionUser = await getSession();
+    //console.log('session user: ', sessionUser);  
 
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`

@@ -18,7 +18,7 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
   useEffect(() => {
     console.log('body on canvas: ', document);
     
-    document.body.addEventListener('touchstart', (e) => {
+    /*document.body.addEventListener('touchstart', (e) => {
       if(e.target == document.getElementById('canvas')){
         e.preventDefault();
       }
@@ -34,7 +34,7 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
       if(e.target == document.getElementById('canvas')){
         e.preventDefault();
       }
-    }, false);
+    }, false);*/
   }, []);
 
   const saveCanvas = (s:string):void => {
