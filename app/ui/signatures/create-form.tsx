@@ -15,9 +15,9 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createSignature, initialState);
   
-  console.log('body on canvas: ', document.body);
+  console.log('body on canvas: ', document);
 
-  document.body.addEventListener('touchstart', (e) => {
+  /*document.body.addEventListener('touchstart', (e) => {
     if(e.target == document.getElementById('formCanvas')){
       e.preventDefault();
     }
@@ -33,7 +33,7 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
     if(e.target == document.getElementById('formCanvas')){
       e.preventDefault();
     }
-  }, false);
+  }, false);*/
 
   const saveCanvas = (s:string):void => {
     console.log('saveCanvas!');
