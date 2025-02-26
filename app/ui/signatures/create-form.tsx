@@ -15,9 +15,9 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createSignature, initialState);
   
-  console.log('body on canvas: ', document);
-
   useEffect(() => {
+    console.log('body on canvas: ', document);
+    
     document.body.addEventListener('touchstart', (e) => {
       if(e.target == document.getElementById('canvas')){
         e.preventDefault();
