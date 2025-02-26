@@ -19,6 +19,7 @@ export default async function SignaturesTable({
   await Promise.all(signatures.map( async (sig) => {
     const decrypted = await crypto.decrypt(sig.data);
     sig.data = decrypted;
+    sig.key = sig.id;
     decryptedSignatures.push(sig);
   }));
   
