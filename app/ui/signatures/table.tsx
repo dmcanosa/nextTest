@@ -21,8 +21,8 @@ export default async function SignaturesTable({
     sig.data = decrypted;
     sig.key = sig.id;
     const date = new Date(sig.created);
-    
-    sig.created = date;
+    console.log('date: ', date.toDateString());
+    sig.created = date.toDateString();
     decryptedSignatures.push(sig);
   }));
   
