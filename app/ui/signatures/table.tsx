@@ -51,7 +51,7 @@ export default async function SignaturesTable({
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {signature.created.toString()}
+                      {signature.created}
                     </p>
                     <p className="text-xl font-medium">
                       {signature.active ? 'ACTIVA' : 'INACTIVA'}
@@ -105,7 +105,7 @@ export default async function SignaturesTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <span>
-                      {signature.created.toString()}
+                      {signature.created}
                     </span>
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
