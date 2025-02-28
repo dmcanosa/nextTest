@@ -22,8 +22,17 @@ const FormSchema = z.object({
   data: z.string(),
   date: z.string(),
 });
- 
+
+const docFormSchema = z.object({
+  id: z.string(),
+  template_name: z.string(),
+  signature_id: z.string(),
+  user_id: z.string(),  
+});
+
+
 const CreateSignature = FormSchema.omit({ id: true, date: true });
+const CreateDocument = docFormSchema.omit({ id: true });
 const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     
 export type State = {
@@ -32,6 +41,16 @@ export type State = {
     //amount?: string[];
     data?: string[];
     //status?: string[];
+  };
+  message?: string | null;
+};
+
+export type docState = {
+  errors?: {
+    //customerId?: string[];
+    signature_id?: string[];
+    template_name?: string[];
+    user_id?: string[];
   };
   message?: string | null;
 };
@@ -185,6 +204,53 @@ export async function deleteSignature(id: string) {
   } catch (error) {
     return { message: 'Database Error: Failed to Delete signature.'+error };
   }
+}
+
+export async function createDocument(prevState: docState, formData: FormData) {
+  const validatedFields = CreateDocument.safeParse({
+    user_id: formData.get('user_id'),
+    signature_id: formData.get('signature_id'),
+    template_name: formData.get('template_name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create document.',
+    };
+  }
+
+  const cookieStore = await cookies()
+  const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+  //const userEmail:string = cookieStore.get('user_email').value;
+  const userEmail:string = decrypted;
+    
+  console.log('useremail: ', userEmail);
+  //const signature = await crypto.encrypt(validatedFields.data.data);
+  //const signature = validatedFields.data.data;
+  const template_name = validatedFields.data.template_name;
+  const signature_id = validatedFields.data.signature_id;
+  //const template_name = validatedFields.data.user;
+  
+
+  try {
+    const user:User = await getUser(userEmail);  
+    if(user){
+      const sql = neon(`${process.env.DATABASE_URL}`);
+      await sql`
+        INSERT INTO documents (template_name, signed, signature_id, user_id, date_signed)
+        VALUES (${template_name}, true, ${signature_id}, ${user.id}, NOW())
+      `;
+    }
+  } catch (error) {
+    return {
+      message: 'Database Error: Failed to Create document.'+error,
+    };
+  }
+
+  revalidatePath('/dashboard/signatures');
+  redirect('/dashboard/signatures');
 }
 
 export async function deleteDocument(id: string) {
