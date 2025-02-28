@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState/*, useEffect*/ } from 'react';
+import { useActionState, useEffect } from 'react';
 import Link from 'next/link';
 /*import {
   CheckIcon,
@@ -14,6 +14,17 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
   const initialState: docState = { message: null, errors: {} };
   const [state, formAction] = useActionState(createDocument, initialState);
   
+  const onFileUpload = (event) => {
+    console.log('event: ',event.target.files[0]);
+    document.getElementById('template_name_label').innerHTML = event.target.files[0].name;
+  }
+
+  useEffect(() => {
+    document.getElementById('template_file').addEventListener('change', onFileUpload, false);
+      
+  }, []);
+
+
   return (
     <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
@@ -24,9 +35,10 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <p className='template_name' id='template_name'>
+              <p className='template_name_label' id='template_name_label'>
 
               </p>
+              <input type='hidden' name='template_name' id='template_name'></input> 
               <input type='file' name='template_file' id='template_file'></input>
               <input type='hidden' name='signature_id' id='signature_id'></input> 
             </div>
