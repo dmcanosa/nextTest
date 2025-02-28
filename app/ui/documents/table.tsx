@@ -1,4 +1,4 @@
-import Image from 'next/image';
+//import Image from 'next/image';
 import { DeleteDocument } from '@/app/ui/documents/buttons';
 //import SignatureStatus from '@/app/ui/signatures/status';
 //import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
@@ -45,14 +45,14 @@ export default async function DocumentsTable({
                 </div>
                 <div className="flex items-center justify-between border-b pb-4">
                   <p className="text-xl font-medium">
-                    {document.signature}
+                    {document.signature_id}
                   </p>
                 </div>
   
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {document.created}
+                      {document.date_signed.toDateString()}
                     </p>
                     <p className="text-xl font-medium">
                       {document.signed ? 'FIRMADO' : 'SIN FIRMA'}
@@ -74,16 +74,19 @@ export default async function DocumentsTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
-                  Signature
+                  Template
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Status
+                  Signature
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Date
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Set inactive
+                  Signed
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Delete
                 </th>
               </tr>
             </thead>
@@ -94,30 +97,27 @@ export default async function DocumentsTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap px-3 py-3">
-                    { document.data &&
-                      <Image 
-                        src={document.data.split('==')[0]}
-                        width={128}
-                        height={96}
-                        style={{ width: 'auto !important', height: '15vh' }}
-                        alt={`document`}
-                      />
-                    } 
+                    <p>{document.template_name}</p>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <span>
-                      {document.active ? 'ACTIVA' : 'INACTIVA'}
+                      {document.signature_id}
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <span>
-                      {document.created}
+                      {document.date_signed.toDateString()}
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <span>
+                      {document.signed ? 'FIRMADO' : 'SIN FIRMAR'}
                     </span>
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       {/*<UpdateSignature id={document.id} /> */}
-                      {document.active &&  
+                      {!document.signed &&  
                         <DeleteDocument id={document.id} />
                       }
                     </div>

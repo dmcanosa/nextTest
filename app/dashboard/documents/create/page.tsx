@@ -1,5 +1,5 @@
-import Form from '@/app/ui/signatures/create-form';
-import Breadcrumbs from '@/app/ui/signatures/breadcrumbs';
+import Form from '@/app/ui/documents/create-form';
+import Breadcrumbs from '@/app/ui/documents/breadcrumbs';
  
 export default async function Page() {
   
@@ -7,10 +7,10 @@ export default async function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Signatures', href: '/dashboard/signatures' },
+          { label: 'Documents', href: '/dashboard/documents' },
           {
-            label: 'Create Signature',
-            href: '/dashboard/signatures/create',
+            label: 'Create Document',
+            href: '/dashboard/documents/create',
             active: true,
           },
         ]}

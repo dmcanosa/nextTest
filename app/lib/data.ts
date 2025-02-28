@@ -133,7 +133,7 @@ export async function fetchFilteredDocuments(
     
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Documents = await sql`
-      SELECT *, DATE(signed) as signed
+      SELECT *
       FROM documents WHERE user_id = ${user.id}
       LIMIT ${DOCUMENTS_PER_PAGE} OFFSET ${offset}
     `;
