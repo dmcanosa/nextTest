@@ -4,7 +4,7 @@ import Table from '@/app/ui/documents/table';
 import { CreateSignedDocument } from '@/app/ui/documents/buttons';
 import { lusitana } from '@/app/ui/fonts';
 //import { DocumentsTableSkeleton } from '@/app/ui/skeletons';
-import { Suspense } from 'react';
+//import { Suspense } from 'react';
 import { fetchDocumentsPages } from '@/app/lib/data';
 
 export default async function Page(
