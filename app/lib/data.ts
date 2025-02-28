@@ -116,3 +116,78 @@ export async function fetchUsersAndTotalSignatures(
     throw new Error('Failed to fetch Signatures.');
   }
 }
+
+const DOCUMENTS_PER_PAGE = 5;
+export async function fetchFilteredDocuments(
+  query: string,
+  currentPage: number,
+) {
+  const offset = (currentPage - 1) * DOCUMENTS_PER_PAGE;
+  console.log(query);
+  try {
+    const cookieStore = await cookies();
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+    const userEmail:string = decrypted;
+    const user:User = await getUser(userEmail);  
+    
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const Documents = await sql`
+      SELECT *, DATE(signed) as signed
+      FROM documents WHERE user_id = ${user.id}
+      LIMIT ${DOCUMENTS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return Documents;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch documents.');
+  }
+}
+
+export async function fetchDocumentsPages(query: string) {
+  try {
+    console.log(query);
+    const cookieStore = await cookies()
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const userEmail:string = decrypted;
+    
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const user:User = await getUser(userEmail);  
+    
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const count = await sql`SELECT COUNT(*)
+      FROM documents WHERE user_id = ${user.id}
+    `;  
+    
+    const totalPages = Math.ceil(Number(count[0].count) / DOCUMENTS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of Documents.');
+  }
+}
+
+export async function fetchDocumentById(id: string) {
+  try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const data = await sql`
+      SELECT *
+      FROM documents
+      WHERE documents.id = ${id};
+    `;
+
+    const Document = data.map((Document) => ({
+      ...Document,
+    }));
+
+    console.log(Document); // Document is an empty array []
+    return data[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch Document.');
+  }
+}

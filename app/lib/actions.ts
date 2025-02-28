@@ -186,3 +186,17 @@ export async function deleteSignature(id: string) {
     return { message: 'Database Error: Failed to Delete signature.'+error };
   }
 }
+
+export async function deleteDocument(id: string) {
+  //throw new Error('Failed to Delete Signature');
+
+  try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    //await sql`DELETE FROM signatures WHERE id = ${id}`;
+    await sql`UPDATE documents SET active = false WHERE id = ${id}`;
+    revalidatePath('/dashboard/documents');
+    return { message: 'Deleted Document.' };
+  } catch (error) {
+    return { message: 'Database Error: Failed to Delete document.'+error };
+  }
+}
