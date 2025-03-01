@@ -10,11 +10,7 @@ export default async function Page() {
   const cookieStore = await cookies()
   const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
   const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
-
-  //const userEmail:string = cookieStore.get('user_email').value;
   const userEmail:string = decrypted;
-  
-  //const userEmail:string = cookieStore.get('user_email').value;
   const user:User = await getUser(userEmail);  
   const signature:Signature = await fetchSignatureByUserId(user.id);  
   const decryptedSig:string = await crypto.decrypt(signature.data);

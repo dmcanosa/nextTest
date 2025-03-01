@@ -1,9 +1,6 @@
 //import Image from 'next/image';
 import { DeleteDocument } from '@/app/ui/documents/buttons';
-//import SignatureStatus from '@/app/ui/signatures/status';
-//import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredDocuments } from '@/app/lib/data';
-//import NextCrypto from 'next-crypto';
 
 export default async function DocumentsTable({
   query,
@@ -13,20 +10,6 @@ export default async function DocumentsTable({
   currentPage: number;
 }) {
   const documents = await fetchFilteredDocuments(query, currentPage);
-
-  /*const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-  const decryptedSignatures = [];
-  await Promise.all(signatures.map( async (sig) => {
-    const decrypted = await crypto.decrypt(sig.data);
-    sig.data = decrypted;
-    sig.key = sig.id;
-    const date = new Date(sig.created);
-    console.log('date: ', date.toDateString());
-    sig.created = date.toDateString();
-    decryptedSignatures.push(sig);
-  }));*/
-  
-  //console.log('decrypted signatures: ', decryptedSignatures);
 
   return (
     <div className="mt-6 flow-root">
