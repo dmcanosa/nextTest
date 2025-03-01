@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { cookies } from 'next/headers';
-import { User } from 'app/lib/definitions';
+import { Signature, User } from 'app/lib/definitions';
 import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
 //import { getSession } from './session';
@@ -186,6 +186,28 @@ export async function fetchDocumentById(id: string) {
 
     console.log(Document); // Document is an empty array []
     return data[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch Document.');
+  }
+}
+
+export async function fetchSignatureByUserId(id: string):Promise<Signature> {
+  try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const data = await sql`
+      SELECT *
+      FROM signatures
+      WHERE active = true
+      AND signatures.user_id = ${id};
+    `;
+
+    const Signature = data.map((Signature) => ({
+      ...Signature,
+    }));
+
+    console.log(Signature); // Document is an empty array []
+    return data[0] as Signature;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Document.');

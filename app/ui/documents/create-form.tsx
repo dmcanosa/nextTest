@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { createDocument, docState } from '@/app/lib/actions';
 
-export default function Form(/*{ customers }: { customers: CustomerField[] }*/) {
+export default function Form( sig /*{ customers }: { customers: CustomerField[] }*/) {
   const initialState: docState = { message: null, errors: {} };
   const [state, formAction] = useActionState(createDocument, initialState);
   
@@ -32,14 +32,32 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
         reader.readAsArrayBuffer(fd);
       })
     ;
-
+    
+    
     const template:Uint8Array<ArrayBufferLike> = await readFileIntoArrayBuffer(event.target.files[0]) as Uint8Array<ArrayBufferLike>;
-
+    const sigData = sig.sig.slice('data:image/png;base64,'.length);
+    console.log('sig: ',sigData);
+    //const svg_data = Buffer.from(sigData, 'base64');
+    
     // Create report
-    console.log('Creating report (can take some time) ... ', template);
+    //console.log('Creating report (can take some time) ... ', template, decryptedSig);
     const report = await createReport({
       template,
-      data: { name: 'John', surname: 'Appleseed' },
+      data: { name: 'John', surname: 'Appleseed'/*, signature: { width: 6, height: 6, svg_data, extension: '.png' }*/ },
+      additionalJsContext: {
+        injectSvg: () => {
+          const svg_data = Buffer.from(sigData, 'base64');
+          return { width: 6, height: 6, data: svg_data, extension: '.svg' };                    
+        }
+      }
+      /*additionalJsContext: {
+        sig: sig, 
+        qrCode: async sig => {
+          //const dataUrl = createQrImage(url, { size: 500 });
+          const data = sig.slice('data:image/jpg;base64,'.length);
+          return { width: 640, height: 480, data, extension: '.jpg' };
+        },
+      }*/
     });
 
     saveDataToFile(
@@ -47,7 +65,7 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
       'report.docx',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     );
-
+      
     
   
   }
