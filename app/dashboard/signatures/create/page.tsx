@@ -1,5 +1,5 @@
 import Form from '@/app/ui/signatures/create-form';
-import Breadcrumbs from '@/app/ui/signatures/breadcrumbs';
+import Breadcrumbs from '@/app/ui/breadcrumbs';
  
 export default async function Page() {
   

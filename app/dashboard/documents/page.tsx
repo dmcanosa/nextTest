@@ -1,4 +1,4 @@
-import DocPagination from '@/app/ui/documents/pagination';
+import DocPagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/documents/table';
 import { CreateSignedDocument } from '@/app/ui/documents/buttons';

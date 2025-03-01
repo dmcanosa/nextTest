@@ -1,5 +1,8 @@
 'use client';
 
+import createReport from 'docx-templates';
+//import { createReport } from 'https://unpkg.com/docx-templates/lib/browser.js';
+//import qrcode from 'yaqrcode';
 import { useActionState, useEffect } from 'react';
 import Link from 'next/link';
 /*import {
@@ -14,9 +17,39 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
   const initialState: docState = { message: null, errors: {} };
   const [state, formAction] = useActionState(createDocument, initialState);
   
-  const onFileUpload = (event) => {
+  const onFileUpload = async (event) => {
     console.log('event: ',event.target.files[0]);
-    document.getElementById('template_name_label').innerHTML = event.target.files[0].name;
+    (document.getElementById('template_name') as HTMLInputElement).value = event.target.files[0].name;
+    //document.getElementById('template_name_label').innerHTML = event.target.files[0].name;
+    
+    const readFileIntoArrayBuffer = fd =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.readAsArrayBuffer(fd);
+      })
+    ;
+
+    const template:Uint8Array<ArrayBufferLike> = await readFileIntoArrayBuffer(event.target.files[0]) as Uint8Array<ArrayBufferLike>;
+
+    // Create report
+    console.log('Creating report (can take some time) ... ', template);
+    const report = await createReport({
+      template,
+      data: { name: 'John', surname: 'Appleseed' },
+    });
+
+    saveDataToFile(
+      report,
+      'report.docx',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+
+    
+  
   }
 
   useEffect(() => {
@@ -24,6 +57,26 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
       
   }, []);
 
+  
+  
+  const saveDataToFile = (data, fileName, mimeType) => {
+    const blob = new Blob([data], { type: mimeType });
+    const url = window.URL.createObjectURL(blob);
+    downloadURL(url, fileName/*, mimeType*/);
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+    }, 1000);
+  };
+  
+  const downloadURL = (data, fileName) => {
+    const a = document.createElement('a');
+    a.href = data;
+    a.download = fileName;
+    document.body.appendChild(a);
+    //a.style = 'display: none';
+    a.click();
+    a.remove();
+  };
 
   return (
     <form action={formAction}>

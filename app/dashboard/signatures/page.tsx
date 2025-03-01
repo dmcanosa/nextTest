@@ -1,4 +1,4 @@
-import Pagination from '@/app/ui/signatures/pagination';
+import Pagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/signatures/table';
 import { CreateSignature } from '@/app/ui/signatures/buttons';
