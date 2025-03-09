@@ -12,7 +12,8 @@ export default async function Page() {
   const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
   const userEmail:string = decrypted;
   const user:User = await getUser(userEmail);  
-  const signature:Signature = await fetchSignatureByUserId(user.id);  
+  const signature:Signature = await fetchSignatureByUserId(user.id); 
+  console.log('siggg ',signature.id); 
   const decryptedSig:string = await crypto.decrypt(signature.data);
     
   return (
@@ -29,6 +30,7 @@ export default async function Page() {
       />
       <Form 
         sig={decryptedSig}
+        sig_id={signature.id}
       />
     </main>
   );

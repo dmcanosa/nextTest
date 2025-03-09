@@ -13,19 +13,23 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { createDocument, docState } from '@/app/lib/actions';
 
-export default function Form( sig ) {
+export default function Form({ sig, sig_id }) {
   const initialState: docState = { message: null, errors: {} };
   const [state, formAction] = useActionState(createDocument, initialState);
-  
+  console.log('sig::: ',sig_id);
+
+
   const onFileUpload = async (event) => {
     console.log('event: ',event.target.files[0]);
     (document.getElementById('template_name') as HTMLInputElement).value = event.target.files[0].name;
     //document.getElementById('template_name_label').innerHTML = event.target.files[0].name;
     
     const template:Uint8Array<ArrayBufferLike> = await readFileIntoArrayBuffer(event.target.files[0]) as Uint8Array<ArrayBufferLike>;
-    const sigData = sig.sig.slice('data:image/png;base64,'.length);
-    //console.log('sig: ',sigData);
+    const sigData = sig.slice('data:image/png;base64,'.length);
+    const sigId = sig_id;
+    console.log('sig: ',sigId);
     (document.getElementById('template_b64') as HTMLInputElement).value = Buffer.from(template).toString('base64');
+    (document.getElementById('signature_id') as HTMLInputElement).value = sigId;
     
     const report = await createReport({
       template,

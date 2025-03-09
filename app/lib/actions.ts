@@ -27,7 +27,9 @@ const docFormSchema = z.object({
   id: z.string(),
   template_name: z.string(),
   signature_id: z.string(),
-  user_id: z.string(),  
+  //user_id: z.string(),
+  template_b64: z.string(),
+  signed_b64: z.string(),
 });
 
 
@@ -47,10 +49,11 @@ export type State = {
 
 export type docState = {
   errors?: {
-    //customerId?: string[];
+    template_b64?: string[];
+    signed_b64?: string[];
     signature_id?: string[];
     template_name?: string[];
-    user_id?: string[];
+    //user_id?: string[];
   };
   message?: string | null;
 };
@@ -208,9 +211,11 @@ export async function deleteSignature(id: string) {
 
 export async function createDocument(prevState: docState, formData: FormData) {
   const validatedFields = CreateDocument.safeParse({
-    user_id: formData.get('user_id'),
+    //user_id: formData.get('user_id'),
     signature_id: formData.get('signature_id'),
     template_name: formData.get('template_name'),
+    template_b64: formData.get('template_b64'),
+    signed_b64: formData.get('signed_b64'),
   });
 
   if (!validatedFields.success) {
@@ -231,16 +236,16 @@ export async function createDocument(prevState: docState, formData: FormData) {
   //const signature = validatedFields.data.data;
   const template_name = validatedFields.data.template_name;
   const signature_id = validatedFields.data.signature_id;
-  //const template_name = validatedFields.data.user;
+  const template_b64 = validatedFields.data.template_b64;
+  const signed_b64 = validatedFields.data.signed_b64;
   
-
   try {
     const user:User = await getUser(userEmail);  
     if(user){
       const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
-        INSERT INTO documents (template_name, signed, signature_id, user_id, date_signed)
-        VALUES (${template_name}, true, ${signature_id}, ${user.id}, NOW())
+        INSERT INTO documents (template_name, template_data, signed_document, signed, signature_id, user_id, date_signed)
+        VALUES (${template_name}, ${template_b64}, ${signed_b64}, true, ${signature_id}, ${user.id}, NOW())
       `;
     }
   } catch (error) {
@@ -249,8 +254,8 @@ export async function createDocument(prevState: docState, formData: FormData) {
     };
   }
 
-  revalidatePath('/dashboard/signatures');
-  redirect('/dashboard/signatures');
+  revalidatePath('/dashboard/documents');
+  redirect('/dashboard/documents');
 }
 
 export async function deleteDocument(id: string) {
