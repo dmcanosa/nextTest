@@ -62,6 +62,27 @@ export async function getUser(email: string): Promise<User | undefined> {
   }
 }
 
+export async function getUserById(id: string): Promise<User | undefined> {
+  try {
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const res = await sql`SELECT * FROM users WHERE id=${id} LIMIT 1`;
+    console.log('res getuser: ',res);
+    const user = <User>{};
+    if(res[0]){
+      user.id = res[0].id;
+      user.name = res[0].name;
+      user.email = res[0].email;
+      user.password = res[0].password;
+      return user;
+    }else{
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    throw new Error('Failed to fetch user.');
+  }
+}
+
 export async function signUp(formData:FormData){
   const validatedFields = SignupFormSchema.safeParse({
     name: formData.get('name'),
