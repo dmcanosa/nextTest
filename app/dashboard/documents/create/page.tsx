@@ -3,7 +3,7 @@ import Breadcrumbs from '@/app/ui/breadcrumbs';
 import { fetchSignatureByUserId } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { Signature, User } from 'app/lib/definitions';
-import { getUser } from '@/auth';
+//import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
  
 export default async function Page() {

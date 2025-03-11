@@ -4,7 +4,7 @@ import { z } from 'zod';
 //import { sql } from '@vercel/postgres';
 import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
-import { signUp, signIn, getUser } from '@/auth';
+import { signUp, signIn/*, getUser*/ } from '@/auth';
 import { AuthError/*, User*/ } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
