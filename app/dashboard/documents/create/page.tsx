@@ -9,10 +9,12 @@ import NextCrypto from 'next-crypto';
 export default async function Page() {
   const cookieStore = await cookies()
   const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-  const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
-  const userEmail:string = decrypted;
-  const user:User = await getUser(userEmail);  
-  const signature:Signature = await fetchSignatureByUserId(user.id); 
+  //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+  const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+  //const userEmail:string = decrypted;
+  //const user:User = await getUser(userEmail);  
+  //const signature:Signature = await fetchSignatureByUserId(user.id); 
+  const signature:Signature = await fetchSignatureByUserId(decrypted); 
   console.log('siggg ',signature.id); 
   const decryptedSig:string = await crypto.decrypt(signature.data);
     

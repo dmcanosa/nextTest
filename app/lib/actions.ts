@@ -62,7 +62,6 @@ export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
 ) {
-          
   try {
     console.log('authenticate!!!', formData);
     const cookieStore = await cookies();
@@ -76,7 +75,7 @@ export async function authenticate(
     //const user = await login(formData);
     console.log('user:',user);
     if(user){
-      console.log('---->logged in');
+      console.log('---->logged in', user);
       //redirect('/dashboard');  
     }
   } catch (error) {
@@ -98,12 +97,18 @@ export async function register(
 ) {
   try {
     //console.log('formdata: ',formData);
-    const data = await signUp(formData);
+    const data:User | { errors: { email?: string[]; name?: string[]; password?: string[]; password2?: string[]; }} = await signUp(formData);
     console.log('data signup register: ',data);
+    //store user ID
     
     if(data && data['errors']){
       return Object.values(data['errors'])[0][0];
     }else{
+      const cookieStore = await cookies();
+      const encrypted = await crypto.encrypt(data['id']);
+      console.log('user_id: ',data['id']);
+      cookieStore.set('user_id', encrypted);
+    
       console.log('errors else:');
       await authenticate('credentials', formData);
     }  
@@ -135,30 +140,31 @@ export async function createSignature(prevState: State, formData: FormData) {
   }
 
   const cookieStore = await cookies()
-  const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+  //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+  const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
 
   //const userEmail:string = cookieStore.get('user_email').value;
-  const userEmail:string = decrypted;
+  //const userEmail:string = decrypted;
     
-  console.log('useremail: ', userEmail);
+  //console.log('useremail: ', userEmail);
   const signature = await crypto.encrypt(validatedFields.data.data);
   //const signature = validatedFields.data.data;
 
   try {
-    const user:User = await getUser(userEmail);  
-    if(user){
+    //const user:User = await getUser(userEmail);  
+    //if(user){
       const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
         UPDATE signatures 
           SET active = false 
-          WHERE user_id = ${user.id}
+          WHERE user_id = ${decrypted}
           AND active = true
       `;
       await sql`
         INSERT INTO signatures (data, created, active, user_id)
-        VALUES (${signature}, NOW(), true, ${user.id})
+        VALUES (${signature}, NOW(), true, ${decrypted})
       `;
-    }
+    //}
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create Signature.'+error,
@@ -226,12 +232,13 @@ export async function createDocument(prevState: docState, formData: FormData) {
   }
 
   const cookieStore = await cookies()
-  const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+  //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+  const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
 
   //const userEmail:string = cookieStore.get('user_email').value;
-  const userEmail:string = decrypted;
+  //const userEmail:string = decrypted;
     
-  console.log('useremail: ', userEmail);
+  //console.log('useremail: ', userEmail);
   //const signature = await crypto.encrypt(validatedFields.data.data);
   //const signature = validatedFields.data.data;
   const template_name = validatedFields.data.template_name;
@@ -240,14 +247,14 @@ export async function createDocument(prevState: docState, formData: FormData) {
   const signed_b64 = validatedFields.data.signed_b64;
   
   try {
-    const user:User = await getUser(userEmail);  
-    if(user){
+    //const user:User = await getUser(userEmail);  
+    //if(user){
       const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
         INSERT INTO documents (template_name, template_data, signed_document, signed, signature_id, user_id, date_signed)
-        VALUES (${template_name}, ${template_b64}, ${signed_b64}, true, ${signature_id}, ${user.id}, NOW())
+        VALUES (${template_name}, ${template_b64}, ${signed_b64}, true, ${signature_id}, ${decrypted}, NOW())
       `;
-    }
+    //}
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create document.'+error,
