@@ -2,7 +2,7 @@ import Form from '@/app/ui/documents/create-form';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
 import { fetchSignatureByUserId } from '@/app/lib/data';
 import { cookies } from 'next/headers';
-import { Signature, User } from 'app/lib/definitions';
+import { Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
  

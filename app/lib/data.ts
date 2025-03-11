@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { cookies } from 'next/headers';
-import { Signature, User } from 'app/lib/definitions';
+import { Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
 //import { getSession } from './session';
