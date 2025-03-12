@@ -22,7 +22,7 @@ export const { auth, signIn, signOut } = NextAuth({
         
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
+          const user = await getUserByEmail(email);
           console.log('user auth.js:',user);
           if (!user) return null;
           const passwordsMatch = await bcrypt.compare(password, user.password);
@@ -41,7 +41,7 @@ export const { auth, signIn, signOut } = NextAuth({
   ],
 })
 
-export async function getUser(email: string): Promise<User | undefined> {
+export async function getUserByEmail(email: string): Promise<User | undefined> {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const res = await sql`SELECT * FROM users WHERE email=${email} LIMIT 1`;
@@ -99,8 +99,7 @@ export async function signUp(formData:FormData){
  
   const { name, email, password } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
-  //console.log('getuser: ',await getUser(email));
-  const user = await getUser(email);
+  const user = await getUserByEmail(email);
   if(!user){
     try {
       const sql = neon(`${process.env.DATABASE_URL}`);
@@ -109,7 +108,7 @@ export async function signUp(formData:FormData){
         values (${name}, ${email}, ${hashedPassword}, NOW())`;
       console.log('data SIGNUP: ',newUserRes);
       //console.log('errors: ',newUserRes[0]);    
-      const dbuser = await getUser(email);
+      const dbuser = await getUserByEmail(email);
       console.log('dbuser: ',dbuser);
       //if (/*newUserRes.length > 0 &&*/ newUserRes['errors']){
       //  console.log('errors!');    

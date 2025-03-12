@@ -14,25 +14,14 @@ export async function fetchFilteredSignatures(
   console.log(query);
   try {
     const cookieStore = await cookies();
-
     const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-
-    //const userEmail:string = cookieStore.get('user_email').value;
-    //const userEmail:string = decrypted;
-    //const user:User = await getUser(userEmail);  
-    
-    //const sessionUser = await getSession();
-    //console.log('session user: ', sessionUser);  
-
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
       SELECT data, active, DATE(created) as created
       FROM signatures WHERE user_id = ${decrypted}
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
-
     return Signatures;
   } catch (error) {
     console.error('Database Error:', error);
@@ -45,20 +34,11 @@ export async function fetchSignaturesPages(query: string) {
     console.log(query);
     const cookieStore = await cookies()
     const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-
-    //const userEmail:string = cookieStore.get('user_email').value;
-    //const userEmail:string = decrypted;
-    
-    //const userEmail:string = cookieStore.get('user_email').value;
-    //const user:User = await getUser(userEmail);  
-    
     const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
       FROM signatures WHERE user_id = ${decrypted}
     `;  
-    
     const totalPages = Math.ceil(Number(count[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
@@ -96,14 +76,6 @@ export async function fetchUsersAndTotalSignatures(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   console.log(query);
   try {
-    //const cookieStore = await cookies();
-
-    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
-
-    //const userEmail:string = cookieStore.get('user_email').value;
-    //const userEmail:string = decrypted;
-    //const user:User = await getUser(userEmail);  
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Users = await sql`
       SELECT COUNT(*) as totalSignatures, user_id, u.name, u.email 
@@ -129,12 +101,9 @@ export async function fetchFilteredDocuments(
   try {
     const cookieStore = await cookies();
     const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-    //const userEmail:string = decrypted;
-    //const user:User = await getUser(userEmail);  
-    
     const sql = neon(`${process.env.DATABASE_URL}`);
+    
     const Documents = await sql`
       SELECT *
       FROM documents WHERE user_id = ${decrypted}
@@ -153,16 +122,9 @@ export async function fetchDocumentsPages(query: string) {
     console.log(query);
     const cookieStore = await cookies()
     const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-
-    //const userEmail:string = cookieStore.get('user_email').value;
-    //const userEmail:string = decrypted;
-    
-    //const userEmail:string = cookieStore.get('user_email').value;
-    //const user:User = await getUser(userEmail);  
-    
     const sql = neon(`${process.env.DATABASE_URL}`);
+    
     const count = await sql`SELECT COUNT(*)
       FROM documents WHERE user_id = ${decrypted}
     `;  
