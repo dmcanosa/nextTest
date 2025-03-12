@@ -1,6 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteDocument, downloadDocument } from '@/app/lib/actions';
+import { deleteDocument/*, downloadDocument*/ } from '@/app/lib/actions';
+import { downloadDocument } from '@/app/lib/data';
 
 export function CreateSignedDocument() {
   return (
@@ -25,9 +26,19 @@ export function UpdateDocument({ id }: { id: string }) {
   );
 }
 
+/*export async function downloadDocument(id:string | FormData){
+  'use server';
+  console.log('download!!!');  
+    
+}*/
+
 export function DownloadDocument({ id }: { id: string }) {
+  /*const downloadDocumentWithId = (id) => {
+    console.log('download!!!');  
+  }//
+  */
   const downloadDocumentWithId = downloadDocument.bind(null, id);
-  
+
   return (
     <form action={downloadDocumentWithId}>
       <button className="rounded-md border p-2 hover:bg-gray-100">

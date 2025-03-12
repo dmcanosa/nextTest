@@ -230,7 +230,7 @@ export async function createDocument(prevState: docState, formData: FormData) {
   redirect('/dashboard/documents');
 }
 
-export async function downloadDocument(id: string) {
+/*export async function downloadDocument(id: string) {
   //throw new Error('Failed to Delete Signature');
   const doc = await fetchDocumentById(id);
   console.log('doc: ',doc);
@@ -246,10 +246,6 @@ export async function downloadDocument(id: string) {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     );
 
-    /*const sql = neon(`${process.env.DATABASE_URL}`);
-    //await sql`DELETE FROM signatures WHERE id = ${id}`;
-    await sql`UPDATE documents SET active = false WHERE id = ${id}`;
-    revalidatePath('/dashboard/documents');*/
     revalidatePath('/dashboard/documents');
     return { message: 'Deleted Document.' };
   } catch (error) {
@@ -261,7 +257,7 @@ export async function saveDataToFile(data, fileName, mimeType){
   console.log('saveeee');
   const blob = new Blob([data], { type: mimeType });
   const url = window.URL.createObjectURL(blob);
-  downloadURL(url, fileName/*, mimeType*/);
+  downloadURL(url, fileName);
   setTimeout(() => {
     window.URL.revokeObjectURL(url);
   }, 1000);
@@ -275,7 +271,7 @@ const downloadURL = (data, fileName) => {
   //a.style = 'display: none';
   a.click();
   a.remove();
-};
+};*/
 
 export async function deleteDocument(id: string) {
   //throw new Error('Failed to Delete Signature');
