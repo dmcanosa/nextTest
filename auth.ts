@@ -7,6 +7,9 @@ import { neon } from '@neondatabase/serverless';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import { SignupFormSchema } from '@/app/lib/definitions';
+import { cookies } from 'next/headers';
+import NextCrypto from 'next-crypto';
+
 //import { createSession } from './app/lib/session';
 
 export const { auth, signIn, signOut } = NextAuth({
@@ -29,7 +32,12 @@ export const { auth, signIn, signOut } = NextAuth({
           console.log(passwordsMatch);
           
           if (passwordsMatch){
-            //Window.localStorage.setItem('user_email', user.email); 
+            const cookieStore = await cookies();
+            const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+            const encrypted = await crypto.encrypt(user.id);
+            console.log('user_id: ',user.id);
+            cookieStore.set('user_id', encrypted);
+            
             return user;
           }
         }
