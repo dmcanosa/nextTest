@@ -32,11 +32,11 @@ export default function Form({ sig, sig_id }) {
     
     const report = await createReport({
       template,
-      data: { name: 'John', surname: 'Appleseed' },
+      data: { name: 'Guille', surname: 'Suarez' },
       additionalJsContext: {
-        injectSvg: () => {
+        firma: () => {
           const svg_data = Buffer.from(sigData, 'base64');
-          return { width: 6, height: 6, data: svg_data, extension: '.svg' };                    
+          return { width: 4, height: 4, data: svg_data, extension: '.svg' };                    
         }
       }
     });
