@@ -43,11 +43,11 @@ export default function Form({ sig, sig_id }) {
 
     (document.getElementById('signed_b64') as HTMLInputElement).value = Buffer.from(report).toString('base64');
     
-    saveDataToFile(
+    /*saveDataToFile(
       report,
       'report.docx',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    );
+    );*/
   }
 
   useEffect(() => {

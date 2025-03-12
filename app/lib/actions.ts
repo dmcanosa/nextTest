@@ -10,6 +10,11 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { User } from 'app/lib/definitions';
 import NextCrypto from 'next-crypto';
+import { fetchDocumentById } from './data';
+//import { fetchSignatureByUserId } from '@/app/lib/data';
+//import { Signature/*, User*/ } from 'app/lib/definitions';
+//import { getUser } from '@/auth';
+
 
 const FormSchema = z.object({
   id: z.string(),
@@ -224,6 +229,53 @@ export async function createDocument(prevState: docState, formData: FormData) {
   revalidatePath('/dashboard/documents');
   redirect('/dashboard/documents');
 }
+
+export async function downloadDocument(id: string) {
+  //throw new Error('Failed to Delete Signature');
+  const doc = await fetchDocumentById(id);
+  console.log('doc: ',doc);
+  const report = Buffer.from(doc.signed_document, 'base64');
+  //const signature:Signature = await fetchSignatureByUserId(doc.user_id); 
+  //const decryptedSig:string = await crypto.decrypt(signature.data);
+
+
+  try {
+    saveDataToFile(
+      report,
+      'report.docx',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+
+    /*const sql = neon(`${process.env.DATABASE_URL}`);
+    //await sql`DELETE FROM signatures WHERE id = ${id}`;
+    await sql`UPDATE documents SET active = false WHERE id = ${id}`;
+    revalidatePath('/dashboard/documents');*/
+    revalidatePath('/dashboard/documents');
+    return { message: 'Deleted Document.' };
+  } catch (error) {
+    return { message: 'Database Error: Failed to Delete document.'+error };
+  }
+}
+
+export async function saveDataToFile(data, fileName, mimeType){
+  console.log('saveeee');
+  const blob = new Blob([data], { type: mimeType });
+  const url = window.URL.createObjectURL(blob);
+  downloadURL(url, fileName/*, mimeType*/);
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+  }, 1000);
+}
+
+const downloadURL = (data, fileName) => {
+  const a = document.createElement('a');
+  a.href = data;
+  a.download = fileName;
+  document.body.appendChild(a);
+  //a.style = 'display: none';
+  a.click();
+  a.remove();
+};
 
 export async function deleteDocument(id: string) {
   //throw new Error('Failed to Delete Signature');

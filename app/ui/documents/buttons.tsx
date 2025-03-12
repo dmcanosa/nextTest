@@ -1,6 +1,6 @@
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlusIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteDocument } from '@/app/lib/actions';
+import { deleteDocument, downloadDocument } from '@/app/lib/actions';
 
 export function CreateSignedDocument() {
   return (
@@ -25,6 +25,19 @@ export function UpdateDocument({ id }: { id: string }) {
   );
 }
 
+export function DownloadDocument({ id }: { id: string }) {
+  const downloadDocumentWithId = downloadDocument.bind(null, id);
+  
+  return (
+    <form action={downloadDocumentWithId}>
+      <button className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">Download</span>
+        <ArrowDownTrayIcon className="w-5" />
+      </button>
+    </form>
+  );
+}
+
 export function DeleteDocument({ id }: { id: string }) {
   const deleteDocumentWithId = deleteDocument.bind(null, id);
   
@@ -37,3 +50,5 @@ export function DeleteDocument({ id }: { id: string }) {
     </form>
   );
 }
+
+

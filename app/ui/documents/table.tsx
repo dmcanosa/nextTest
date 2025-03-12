@@ -1,5 +1,5 @@
 //import Image from 'next/image';
-import { DeleteDocument } from '@/app/ui/documents/buttons';
+import { DeleteDocument, DownloadDocument } from '@/app/ui/documents/buttons';
 import { fetchFilteredDocuments } from '@/app/lib/data';
 
 export default async function DocumentsTable({
@@ -41,11 +41,11 @@ export default async function DocumentsTable({
                       {document.signed ? 'FIRMADO' : 'SIN FIRMA'}
                     </p>
                   </div>
-                  {/*
+                  {
                   <div className="flex justify-end gap-2">
                     <DownloadDocument id={document.id} />
                   </div>
-                  */}
+                  }
                   <div className="flex justify-end gap-2">
                     <DeleteDocument id={document.id} />
                   </div>
@@ -67,6 +67,9 @@ export default async function DocumentsTable({
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Signed
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium downloadIconTitle">
+                  Download
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Delete
@@ -96,6 +99,13 @@ export default async function DocumentsTable({
                     <span>
                       {document.signed ? 'FIRMADO' : 'SIN FIRMAR'}
                     </span>
+                  </td>
+                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                    <div className="flex justify-end gap-3 downloadIcon">
+                      {document.signed &&  
+                        <DownloadDocument id={document.id} />
+                      }
+                    </div>
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

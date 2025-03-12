@@ -20,3 +20,12 @@ input[type='number']::-webkit-outer-spin-button {
 .canvas{
   border: solid 1px darkgray;
 }
+
+.downloadIcon{
+  display: flex;
+  justify-content: center;
+}
+
+.downloadIconTitle{
+  text-align: center;
+}
