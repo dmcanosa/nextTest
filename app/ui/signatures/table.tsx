@@ -15,14 +15,10 @@ export default async function SignaturesTable({
   currentPage: number;
 }) {
   const signatures = await fetchFilteredSignatures(query, currentPage);
-  console.log('signatures: ', signatures);
-
+  
   const decryptedSignatures = [];
   await Promise.all(signatures.map( async (sig) => {
-    console.log('sig data: ',sig.data);
     const decrypted = await crypto.decrypt(sig.data);
-    console.log('sig decrypted data: ',decrypted);
-    
     sig.data = decrypted;
     sig.key = sig.id;
     const date = new Date(sig.created);
@@ -31,7 +27,7 @@ export default async function SignaturesTable({
     decryptedSignatures.push(sig);
   }));
   
-  console.log('decrypted signatures: ', decryptedSignatures);
+  //console.log('decrypted signatures: ', decryptedSignatures);
 
   return (
     <div className="mt-6 flow-root">
