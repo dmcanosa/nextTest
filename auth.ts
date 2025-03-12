@@ -108,6 +108,7 @@ export async function signUp(formData:FormData){
   const { name, email, password } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await getUserByEmail(email);
+  console.log('user on signup: ',user);
   if(!user){
     try {
       const sql = neon(`${process.env.DATABASE_URL}`);

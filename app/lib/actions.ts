@@ -86,7 +86,7 @@ export async function register(
       return Object.values(data['errors'])[0][0];
     }else{
       const cookieStore = await cookies();
-      const encrypted = await crypto.encrypt(data['id']);
+      const encrypted = await crypto.encrypt((data as User).id);
       console.log('user_id: ',data['id']);
       cookieStore.set('user_id', encrypted);
       console.log('errors else:');

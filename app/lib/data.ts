@@ -16,7 +16,10 @@ export async function fetchFilteredSignatures(
   console.log(query);
   try {
     const cookieStore = await cookies();
+    console.log('cookie: ',cookieStore.get('user_id').value);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+    console.log('decrypted cookie: ',decrypted);
+    
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
       SELECT data, active, DATE(created) as created
