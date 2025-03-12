@@ -6,6 +6,8 @@ import NextCrypto from 'next-crypto';
 //import { getSession } from './session';
 
 const ITEMS_PER_PAGE = 5;
+const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+
 export async function fetchFilteredSignatures(
   query: string,
   currentPage: number,
@@ -14,7 +16,6 @@ export async function fetchFilteredSignatures(
   console.log(query);
   try {
     const cookieStore = await cookies();
-    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
@@ -33,7 +34,7 @@ export async function fetchSignaturesPages(query: string) {
   try {
     console.log(query);
     const cookieStore = await cookies()
-    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
@@ -100,7 +101,7 @@ export async function fetchFilteredDocuments(
   console.log(query);
   try {
     const cookieStore = await cookies();
-    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     const sql = neon(`${process.env.DATABASE_URL}`);
     
@@ -121,7 +122,7 @@ export async function fetchDocumentsPages(query: string) {
   try {
     console.log(query);
     const cookieStore = await cookies()
-    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     const sql = neon(`${process.env.DATABASE_URL}`);
     
