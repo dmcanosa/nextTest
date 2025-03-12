@@ -5,8 +5,6 @@ import { DeleteSignature } from '@/app/ui/signatures/buttons';
 import { fetchFilteredSignatures } from '@/app/lib/data';
 import NextCrypto from 'next-crypto';
 
-const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-  
 export default async function SignaturesTable({
   query,
   currentPage,
@@ -15,14 +13,15 @@ export default async function SignaturesTable({
   currentPage: number;
 }) {
   const signatures = await fetchFilteredSignatures(query, currentPage);
-  
+
+  const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
   const decryptedSignatures = [];
   await Promise.all(signatures.map( async (sig) => {
     const decrypted = await crypto.decrypt(sig.data);
     sig.data = decrypted;
     sig.key = sig.id;
     const date = new Date(sig.created);
-    //console.log('date: ', date.toDateString());
+    console.log('date: ', date.toDateString());
     sig.created = date.toDateString();
     decryptedSignatures.push(sig);
   }));

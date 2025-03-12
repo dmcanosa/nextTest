@@ -18,6 +18,7 @@ export default function Form({ sig, sig_id }) {
   const [state, formAction] = useActionState(createDocument, initialState);
   console.log('sig::: ',sig_id);
 
+
   const onFileUpload = async (event) => {
     console.log('event: ',event.target.files[0]);
     (document.getElementById('template_name') as HTMLInputElement).value = event.target.files[0].name;

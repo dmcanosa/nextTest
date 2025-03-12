@@ -1,13 +1,11 @@
 import { neon } from '@neondatabase/serverless';
 import { cookies } from 'next/headers';
-import { Signature/*, User*/ } from 'app/lib/definitions';
-//import { getUser } from '@/auth';
+import { Signature, User } from 'app/lib/definitions';
+import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
 //import { getSession } from './session';
 
 const ITEMS_PER_PAGE = 5;
-const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-
 export async function fetchFilteredSignatures(
   query: string,
   currentPage: number,
@@ -16,16 +14,24 @@ export async function fetchFilteredSignatures(
   console.log(query);
   try {
     const cookieStore = await cookies();
-    console.log('cookie: ',cookieStore.get('user_id').value);
-    const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-    console.log('decrypted cookie: ',decrypted);
+
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const userEmail:string = decrypted;
+    const user:User = await getUser(userEmail);  
     
+    //const sessionUser = await getSession();
+    //console.log('session user: ', sessionUser);  
+
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
       SELECT data, active, DATE(created) as created
-      FROM signatures WHERE user_id = ${decrypted}
+      FROM signatures WHERE user_id = ${user.id}
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
+
     return Signatures;
   } catch (error) {
     console.error('Database Error:', error);
@@ -37,12 +43,20 @@ export async function fetchSignaturesPages(query: string) {
   try {
     console.log(query);
     const cookieStore = await cookies()
-    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const userEmail:string = decrypted;
+    
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const user:User = await getUser(userEmail);  
+    
     const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
-      FROM signatures WHERE user_id = ${decrypted}
+      FROM signatures WHERE user_id = ${user.id}
     `;  
+    
     const totalPages = Math.ceil(Number(count[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
@@ -80,6 +94,14 @@ export async function fetchUsersAndTotalSignatures(
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   console.log(query);
   try {
+    //const cookieStore = await cookies();
+
+    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    //const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+    //const userEmail:string = cookieStore.get('user_email').value;
+    //const userEmail:string = decrypted;
+    //const user:User = await getUser(userEmail);  
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Users = await sql`
       SELECT COUNT(*) as totalSignatures, user_id, u.name, u.email 
@@ -104,13 +126,15 @@ export async function fetchFilteredDocuments(
   console.log(query);
   try {
     const cookieStore = await cookies();
-    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+    const userEmail:string = decrypted;
+    const user:User = await getUser(userEmail);  
     
+    const sql = neon(`${process.env.DATABASE_URL}`);
     const Documents = await sql`
       SELECT *
-      FROM documents WHERE user_id = ${decrypted}
+      FROM documents WHERE user_id = ${user.id}
       LIMIT ${DOCUMENTS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -125,12 +149,18 @@ export async function fetchDocumentsPages(query: string) {
   try {
     console.log(query);
     const cookieStore = await cookies()
-    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    const decrypted = await crypto.decrypt(cookieStore.get('user_email').value);
+
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const userEmail:string = decrypted;
     
+    //const userEmail:string = cookieStore.get('user_email').value;
+    const user:User = await getUser(userEmail);  
+    
+    const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
-      FROM documents WHERE user_id = ${decrypted}
+      FROM documents WHERE user_id = ${user.id}
     `;  
     
     const totalPages = Math.ceil(Number(count[0].count) / DOCUMENTS_PER_PAGE);
