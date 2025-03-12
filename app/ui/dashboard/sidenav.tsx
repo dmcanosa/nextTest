@@ -3,6 +3,8 @@ import NavLinks from '@/app/ui/dashboard/nav-links';
 import AcmeLogo from '@/app/ui/acme-logo';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from '@/auth';
+import { cookies } from 'next/headers';
+
 //import { revalidatePath } from 'next/cache';
 //import { redirect } from 'next/navigation';
 
@@ -23,6 +25,8 @@ export default function SideNav() {
         <form
           action={async () => {
             'use server';
+            const cookieStore = await cookies()
+            cookieStore.delete('user_id');    
             await signOut({ redirectTo: '/', redirect:true });
           }}
         >
