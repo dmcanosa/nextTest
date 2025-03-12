@@ -47,7 +47,7 @@ export async function decrypt(session: string | undefined = '') {
 }*/
 
 export async function updateSession() {
-  const session = (await cookies()).get('authjs.session-token')?.value
+  const session = (await cookies()).get('__Secure-authjs.session-token')?.value
   const payload = await decrypt(session)
  
   if (!session || !payload) {
@@ -57,7 +57,7 @@ export async function updateSession() {
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
  
   const cookieStore = await cookies()
-  cookieStore.set('authjs.session-token', session, {
+  cookieStore.set('__Secure-authjs.session-token', session, {
     httpOnly: true,
     secure: true,
     expires: expires,
@@ -68,11 +68,11 @@ export async function updateSession() {
 
 export async function deleteSession() {
   const cookieStore = await cookies()
-  cookieStore.delete('authjs.session-token')
+  cookieStore.delete('__Secure-authjs.session-token')
 }
 
 export async function getSession() {
-  const session = (await cookies()).get('authjs.session-token')?.value;
+  const session = (await cookies()).get('__Secure-authjs.session-token')?.value;
   console.log('session: ',session);
   const payload = await decrypt(session);
   console.log('payload: ',payload);
