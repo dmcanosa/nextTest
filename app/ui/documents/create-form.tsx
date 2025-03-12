@@ -66,10 +66,10 @@ export default function Form({ sig, sig_id }) {
     })
   ;
   
-  const saveDataToFile = (data, fileName, mimeType) => {
+  /*const saveDataToFile = (data, fileName, mimeType) => {
     const blob = new Blob([data], { type: mimeType });
     const url = window.URL.createObjectURL(blob);
-    downloadURL(url, fileName/*, mimeType*/);
+    downloadURL(url, fileName);
     setTimeout(() => {
       window.URL.revokeObjectURL(url);
     }, 1000);
@@ -83,7 +83,7 @@ export default function Form({ sig, sig_id }) {
     //a.style = 'display: none';
     a.click();
     a.remove();
-  };
+  };*/
 
   return (
     <form action={formAction}>
