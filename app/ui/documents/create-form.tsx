@@ -1,15 +1,8 @@
 'use client';
 
 import createReport from 'docx-templates';
-//import { createReport } from 'https://unpkg.com/docx-templates/lib/browser.js';
-//import qrcode from 'yaqrcode';
 import { useActionState, useEffect } from 'react';
 import Link from 'next/link';
-/*import {
-  CheckIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-} from '@heroicons/react/24/outline';*/
 import { Button } from '@/app/ui/button';
 import { createDocument, docState } from '@/app/lib/actions';
 
@@ -66,25 +59,6 @@ export default function Form({ sig, sig_id }) {
     })
   ;
   
-  /*const saveDataToFile = (data, fileName, mimeType) => {
-    const blob = new Blob([data], { type: mimeType });
-    const url = window.URL.createObjectURL(blob);
-    downloadURL(url, fileName);
-    setTimeout(() => {
-      window.URL.revokeObjectURL(url);
-    }, 1000);
-  };
-  
-  const downloadURL = (data, fileName) => {
-    const a = document.createElement('a');
-    a.href = data;
-    a.download = fileName;
-    document.body.appendChild(a);
-    //a.style = 'display: none';
-    a.click();
-    a.remove();
-  };*/
-
   return (
     <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
