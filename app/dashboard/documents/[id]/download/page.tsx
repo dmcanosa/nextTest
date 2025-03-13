@@ -1,11 +1,11 @@
 //'use client';
 
-import { CreateSignedDocument } from '@/app/ui/documents/buttons';
+//import { CreateSignedDocument } from '@/app/ui/documents/buttons';
 import { lusitana } from '@/app/ui/fonts';
-import { fetchDocumentById, fetchDocumentsPages } from '@/app/lib/data';
-import { Document } from '@/app/lib/definitions';
-import { useEffect } from 'react';
-import { useParams } from 'next/navigation';
+//import { fetchDocumentById, fetchDocumentsPages } from '@/app/lib/data';
+//import { Document } from '@/app/lib/definitions';
+//import { useEffect } from 'react';
+//import { useParams } from 'next/navigation';
 
 export default async function Page(/* {
     params,
@@ -13,7 +13,7 @@ export default async function Page(/* {
     params: { id: string }
   } */){
 
-  const saveDataToFile = (data, fileName, mimeType) => {
+  /*const saveDataToFile = (data, fileName, mimeType) => {
     const blob = new Blob([data], { type: mimeType });
     const url = window.URL.createObjectURL(blob);
     downloadURL(url, fileName);
@@ -43,16 +43,17 @@ export default async function Page(/* {
     );
   };*/
 
-  const params = useParams<{ id: string; }>();
+  //const params = useParams<{ id: string; }>();
 
-  const docId = params.id;
-  console.log('doc download:', docId);
-  const doc:Document = await fetchDocumentById(docId);
+  //const docId = params.id;
+  //console.log('doc download:', docId);
+  /*const doc:Document = await fetchDocumentById(docId);
   const signedDocB64 = doc.signed_document;
   const signedDoc = Uint8Array.from(Buffer.from(signedDocB64, 'base64'))
   console.log('doc :',doc);
-  
-  useEffect(()=>{
+  */
+
+  /*useEffect(()=>{
     //serverFunction(docId);
     
     saveDataToFile(
@@ -61,10 +62,10 @@ export default async function Page(/* {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     );
 
-    console.log('doc download: '/*,document*/);
+    //console.log('doc download: ',document);
     
     
-  }, []);
+  }, []);*/
 
   return (
     <div className="w-full">

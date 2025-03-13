@@ -48,7 +48,7 @@ export default async function DocumentsTable({
                   </div>
                   {
                   <div className="flex justify-end gap-2">
-                    <DownloadDocument id={document.id} />
+                    <DownloadDocument doc={document.signed_document} />
                   </div>
                   }
                   <div className="flex justify-end gap-2">
@@ -108,7 +108,7 @@ export default async function DocumentsTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3 downloadIcon">
                       {document.signed &&  
-                        <DownloadDocument id={document.id} />
+                        <DownloadDocument doc={document.signed_document} />
                       }
                     </div>
                   </td>

@@ -1,7 +1,9 @@
+'use client';
+
 import { PencilIcon, PlusIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteDocument, downloadDocument } from '@/app/lib/actions';
-import { fetchDocumentById } from '@/app/lib/data';
+import { deleteDocument/*, downloadDocument*/ } from '@/app/lib/actions';
+//import { fetchDocumentById } from '@/app/lib/data';
 
 export function CreateSignedDocument() {
   return (
@@ -26,29 +28,48 @@ export function UpdateDocument({ id }: { id: string }) {
   );
 }
 
-export function DownloadDocument({ id }: { id: string }) {
-  /*const downloadDocument = (id) => {
-    console.log('download!!!', id);  
-  }*/
-  
-  //const downloadDocumentWithId = downloadDocument.bind(null, id);
+export function saveDataToFile (data, fileName, mimeType){
+  const blob = new Blob([data], { type: mimeType });
+  const url = window.URL.createObjectURL(blob);
+  downloadURL(url, fileName);
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+  }, 1000);
+}
+
+export function downloadURL(data, fileName){
+  const a = document.createElement('a');
+  a.href = data;
+  a.download = fileName;
+  document.body.appendChild(a);
+  //a.style = 'display: none';
+  a.click();
+  a.remove();
+}
+
+export function downloadDocument(doc:string){
+  //console.log('down doc: ',doc);
+
+  const signedDoc = Uint8Array.from(Buffer.from(doc, 'base64'));
+
+  saveDataToFile(
+    signedDoc,
+    'report.docx',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  );
+}
+
+export function DownloadDocument({ doc }: { doc: string }) {
+  const downloadDocumentWithId = downloadDocument.bind(null, doc);
 
   return (
-    <Link
-        href={`/dashboard/documents/${id}/download`}
-        className="rounded-md border p-2 hover:bg-gray-100"
-      >
-        <ArrowDownTrayIcon className="w-5" />
-      </Link>
-  );
-  /*return (
-    <form>
+    <form action={downloadDocumentWithId}>
       <button className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Download</span>
         <ArrowDownTrayIcon className="w-5" />
       </button>
     </form>
-  );*/
+  );
 }
 
 export function DeleteDocument({ id }: { id: string }) {
