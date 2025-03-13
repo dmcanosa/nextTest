@@ -1,3 +1,5 @@
+'use server';
+
 import { z } from 'zod';
 //import { sql } from '@vercel/postgres';
 import { neon } from '@neondatabase/serverless';
