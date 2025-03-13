@@ -73,6 +73,7 @@ export function DownloadDocument({ doc }: { doc: string }) {
 }
 
 export function DeleteDocument({ id }: { id: string }) {
+  console.log(id);
   //const deleteDocumentWithId = deleteDocument.bind(null, id);
   
   return (

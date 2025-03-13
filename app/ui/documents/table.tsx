@@ -1,7 +1,6 @@
 //import Image from 'next/image';
 import { DeleteDocument, DownloadDocument } from '@/app/ui/documents/buttons';
-import { fetchFilteredDocuments, fetchDocumentById } from '@/app/lib/data';
-//import { useEffect } from 'react';
+import { fetchFilteredDocuments/*, fetchDocumentById*/ } from '@/app/lib/data';
 
 export default async function DocumentsTable({
   query,
@@ -12,10 +11,6 @@ export default async function DocumentsTable({
 }) {
   const documents = await fetchFilteredDocuments(query, currentPage);
 
-  /*useEffect(() => {
-    console.log('window: ',window);    
-  }, []);*/
-    
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
