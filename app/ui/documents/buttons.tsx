@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteDocument/*, downloadDocument*/ } from '@/app/lib/actions';
-import { downloadDocument } from '@/app/lib/data';
+import { deleteDocument, downloadDocument } from '@/app/lib/actions';
+import { fetchDocumentById } from '@/app/lib/data';
 
 export function CreateSignedDocument() {
   return (
@@ -26,34 +26,36 @@ export function UpdateDocument({ id }: { id: string }) {
   );
 }
 
-/*export async function downloadDocument(id:string | FormData){
-  'use server';
-  console.log('download!!!');  
-    
-}*/
-
 export function DownloadDocument({ id }: { id: string }) {
-  /*const downloadDocumentWithId = (id) => {
-    console.log('download!!!');  
-  }//
-  */
-  const downloadDocumentWithId = downloadDocument.bind(null, id);
+  /*const downloadDocument = (id) => {
+    console.log('download!!!', id);  
+  }*/
+  
+  //const downloadDocumentWithId = downloadDocument.bind(null, id);
 
   return (
-    <form action={downloadDocumentWithId}>
+    <Link
+        href={`/dashboard/documents/${id}/download`}
+        className="rounded-md border p-2 hover:bg-gray-100"
+      >
+        <ArrowDownTrayIcon className="w-5" />
+      </Link>
+  );
+  /*return (
+    <form>
       <button className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Download</span>
         <ArrowDownTrayIcon className="w-5" />
       </button>
     </form>
-  );
+  );*/
 }
 
 export function DeleteDocument({ id }: { id: string }) {
-  const deleteDocumentWithId = deleteDocument.bind(null, id);
+  //const deleteDocumentWithId = deleteDocument.bind(null, id);
   
   return (
-    <form action={deleteDocumentWithId}>
+    <form /*action={deleteDocumentWithId}*/>
       <button className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />

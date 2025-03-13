@@ -1,5 +1,3 @@
-'use server';
-
 import { z } from 'zod';
 //import { sql } from '@vercel/postgres';
 import { neon } from '@neondatabase/serverless';
@@ -10,7 +8,7 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { User } from 'app/lib/definitions';
 import NextCrypto from 'next-crypto';
-import { fetchDocumentById } from './data';
+import { fetchDocumentById/*, saveDataToFile*/ } from './data';
 //import { fetchSignatureByUserId } from '@/app/lib/data';
 //import { Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
@@ -230,8 +228,12 @@ export async function createDocument(prevState: docState, formData: FormData) {
   redirect('/dashboard/documents');
 }
 
-/*export async function downloadDocument(id: string) {
+export async function downloadDocument(id: string) {
+  'use server';
+
+  console.log('downloadDOC: ',id);
   //throw new Error('Failed to Delete Signature');
+  
   const doc = await fetchDocumentById(id);
   console.log('doc: ',doc);
   const report = Buffer.from(doc.signed_document, 'base64');
@@ -253,7 +255,10 @@ export async function createDocument(prevState: docState, formData: FormData) {
   }
 }
 
+
 export async function saveDataToFile(data, fileName, mimeType){
+  'use client';
+
   console.log('saveeee');
   const blob = new Blob([data], { type: mimeType });
   const url = window.URL.createObjectURL(blob);
@@ -271,7 +276,7 @@ const downloadURL = (data, fileName) => {
   //a.style = 'display: none';
   a.click();
   a.remove();
-};*/
+};
 
 export async function deleteDocument(id: string) {
   //throw new Error('Failed to Delete Signature');

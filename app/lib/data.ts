@@ -1,57 +1,12 @@
 import { neon } from '@neondatabase/serverless';
 import { cookies } from 'next/headers';
-import { Signature/*, User*/ } from 'app/lib/definitions';
+import { Document, Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
 //import { getSession } from './session';
 
 const ITEMS_PER_PAGE = 5;
 const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-
-export async function downloadDocument(id: string) {
-  'use server';
-  
-  console.log('saving doc');
-  //throw new Error('Failed to Delete Signature');
-  const doc = await fetchDocumentById(id);
-  console.log('doc: ',doc);
-  const report = Buffer.from(doc.signed_document, 'base64');
-  
-  try {
-    saveDataToFile(
-      report,
-      'report.docx',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    );
-
-    
-    //revalidatePath('/dashboard/documents');*/
-    //revalidatePath('/dashboard/documents');
-    return { message: 'Deleted Document.' };
-  } catch (error) {
-    return { message: 'Database Error: Failed to Delete document.'+error };
-  }
-}
-
-export async function saveDataToFile(data, fileName, mimeType){
-  console.log('saveeee');
-  const blob = new Blob([data], { type: mimeType });
-  const url = window.URL.createObjectURL(blob);
-  downloadURL(url, fileName/*, mimeType*/);
-  setTimeout(() => {
-    window.URL.revokeObjectURL(url);
-  }, 1000);
-}
-
-const downloadURL = (data, fileName) => {
-  const a = document.createElement('a');
-  a.href = data;
-  a.download = fileName;
-  document.body.appendChild(a);
-  //a.style = 'display: none';
-  a.click();
-  a.remove();
-};
 
 export async function fetchFilteredSignatures(
   query: string,
@@ -192,15 +147,18 @@ export async function fetchDocumentById(id: string) {
     const data = await sql`
       SELECT *
       FROM documents
-      WHERE documents.id = ${id};
+      WHERE documents.id = ${id} 
+      LIMIT 1;
     `;
 
-    const Document = data.map((Document) => ({
+    /*const Document = data.map((Document) => ({
       ...Document,
-    }));
+    }));*/
 
+    const Document:Document = data[0] as Document;
     console.log(Document); // Document is an empty array []
-    return data[0];
+    return Document;
+    //return data[0] as Document;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Document.');

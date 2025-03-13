@@ -95,6 +95,16 @@ export type Signature = {
   user_id: string;
 };
 
+export type Document = {
+  template_name: string;
+  template_data: string;
+  signature_id: string;
+  signed: boolean;
+  date_signed: string;
+  signed_document: string;
+  user_id: string;
+};
+
 export type Revenue = {
   month: string;
   revenue: number;
