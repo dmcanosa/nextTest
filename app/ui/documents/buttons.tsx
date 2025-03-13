@@ -2,7 +2,7 @@
 
 import { PencilIcon, PlusIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteDocument/*, downloadDocument*/ } from '@/app/lib/actions';
+//import { deleteDocument/*, downloadDocument*/ } from '@/app/lib/actions';
 //import { fetchDocumentById } from '@/app/lib/data';
 
 export function CreateSignedDocument() {
@@ -47,7 +47,7 @@ export function downloadURL(data, fileName){
   a.remove();
 }
 
-export function downloadDocument(doc:string){
+export function innerDownloadDocument(doc:string){
   //console.log('down doc: ',doc);
 
   const signedDoc = Uint8Array.from(Buffer.from(doc, 'base64'));
@@ -60,7 +60,7 @@ export function downloadDocument(doc:string){
 }
 
 export function DownloadDocument({ doc }: { doc: string }) {
-  const downloadDocumentWithId = downloadDocument.bind(null, doc);
+  const downloadDocumentWithId = innerDownloadDocument.bind(null, doc);
 
   return (
     <form action={downloadDocumentWithId}>
