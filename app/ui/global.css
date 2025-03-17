@@ -29,3 +29,12 @@ input[type='number']::-webkit-outer-spin-button {
 .downloadIconTitle{
   text-align: center;
 }
+
+.deleteIcon{
+  display: flex;
+  justify-content: center;
+}
+
+.deleteIconTitle{
+  text-align: center;
+}

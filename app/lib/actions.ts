@@ -280,12 +280,15 @@ const downloadURL = (data, fileName) => {
 };
 
 export async function deleteDocument(id: string) {
+  //'use server';
+
   //throw new Error('Failed to Delete Signature');
+  //console.log('del doc actions:',id);
 
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     //await sql`DELETE FROM signatures WHERE id = ${id}`;
-    await sql`UPDATE documents SET active = false WHERE id = ${id}`;
+    await sql`UPDATE documents SET active = false WHERE id = ${id}`; //LIMIT 1`;
     revalidatePath('/dashboard/documents');
     return { message: 'Deleted Document.' };
   } catch (error) {

@@ -110,7 +110,9 @@ export async function fetchFilteredDocuments(
     
     const Documents = await sql`
       SELECT *
-      FROM documents WHERE user_id = ${decrypted}
+      FROM documents 
+      WHERE user_id = ${decrypted}
+      AND active = true
       LIMIT ${DOCUMENTS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -130,7 +132,9 @@ export async function fetchDocumentsPages(query: string) {
     const sql = neon(`${process.env.DATABASE_URL}`);
     
     const count = await sql`SELECT COUNT(*)
-      FROM documents WHERE user_id = ${decrypted}
+      FROM documents 
+      WHERE user_id = ${decrypted}
+      AND active = true 
     `;  
     
     const totalPages = Math.ceil(Number(count[0].count) / DOCUMENTS_PER_PAGE);

@@ -103,6 +103,7 @@ export type Document = {
   date_signed: string;
   signed_document: string;
   user_id: string;
+  active: boolean;
 };
 
 export type Revenue = {

@@ -71,7 +71,7 @@ export default async function DocumentsTable({
                 <th scope="col" className="px-3 py-5 font-medium downloadIconTitle">
                   Download
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                <th scope="col" className="px-3 py-5 font-medium deleteIconTitle">
                   Delete
                 </th>
               </tr>
@@ -108,9 +108,9 @@ export default async function DocumentsTable({
                     </div>
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex justify-end gap-3">
+                    <div className="flex justify-end gap-3 deleteIcon">
                       {/*<UpdateSignature id={document.id} /> */}
-                      {!document.signed &&  
+                      {document.active &&  
                         <DeleteDocument id={document.id} />
                       }
                     </div>

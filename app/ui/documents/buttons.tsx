@@ -2,7 +2,7 @@
 
 import { PencilIcon, PlusIcon, TrashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-//import { deleteDocument/*, downloadDocument*/ } from '@/app/lib/actions';
+import { deleteDocument/*, downloadDocument*/ } from '@/app/lib/actions';
 //import { fetchDocumentById } from '@/app/lib/data';
 
 export function CreateSignedDocument() {
@@ -73,11 +73,11 @@ export function DownloadDocument({ doc }: { doc: string }) {
 }
 
 export function DeleteDocument({ id }: { id: string }) {
-  console.log(id);
-  //const deleteDocumentWithId = deleteDocument.bind(null, id);
+  //console.log('del doc:',id);
+  const deleteDocumentWithId = deleteDocument.bind(null, id);
   
   return (
-    <form /*action={deleteDocumentWithId}*/>
+    <form action={deleteDocumentWithId}>
       <button className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />
