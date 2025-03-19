@@ -4,7 +4,7 @@ import Breadcrumbs from '@/app/ui/breadcrumbs';
 export default async function Page() {
   
   return (
-    <main style={{overflow : 'hidden'}}>
+    <main>
       <Breadcrumbs
         breadcrumbs={[
           { label: 'Signatures', href: '/dashboard/signatures' },
