@@ -198,9 +198,9 @@ export async function fetchSignatureByUserId(id: string):Promise<Signature> {
       AND signatures.user_id = ${id};
     `;
 
-    const Signature = data.map((Signature) => ({
+    /*const Signature = data.map((Signature) => ({
       ...Signature,
-    }));
+    }));*/
 
     //console.log(Signature); // Document is an empty array []
     return data[0] as Signature;
