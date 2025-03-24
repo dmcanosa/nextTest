@@ -32,8 +32,8 @@ export default async function SignaturesTable({
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-          <div className="md:hidden" key="key" >
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0" key={Math.random()}>
+          <div className="md:hidden" key={Math.random()} >
             {decryptedSignatures?.map((signature) => (
               <div
                 key={signature.id}
@@ -65,7 +65,7 @@ export default async function SignaturesTable({
               </div>
             ))}
           </div>
-          <table className="hidden min-w-full text-gray-900 md:table">
+          <table className="hidden min-w-full text-gray-900 md:table" key={Math.random()}>
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
@@ -82,7 +82,7 @@ export default async function SignaturesTable({
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white">
+            <tbody className="bg-white" key={Math.random()}>
               {decryptedSignatures?.map((signature) => (
                 <tr
                   key={signature.id}

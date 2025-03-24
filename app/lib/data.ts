@@ -16,15 +16,34 @@ export async function fetchFilteredSignatures(
   console.log(query);
   try {
     const cookieStore = await cookies();
-    console.log('cookie: ',cookieStore.get('user_id').value);
+    //console.log('cookie: ',cookieStore.get('user_id').value);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
-    console.log('decrypted cookie: ',decrypted);
+    //console.log('decrypted cookie: ',decrypted);
     
     const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
       SELECT data, active, DATE(created) as created
       FROM signatures WHERE user_id = ${decrypted}
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+    return Signatures;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch Signatures.');
+  }
+}
+
+export async function fetchSignaturesById(id: string) {
+  //const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  //console.log(query);
+  try {
+    //const cookieStore = await cookies();
+    //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+    
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    const Signatures = await sql`
+      SELECT data, active, DATE(created) as created
+      FROM signatures WHERE user_id = ${id}
     `;
     return Signatures;
   } catch (error) {
@@ -64,7 +83,7 @@ export async function fetchSignatureById(id: string) {
       ...Signature,
     }));
 
-    console.log(Signature); // Signature is an empty array []
+    //console.log(Signature); // Signature is an empty array []
     //return Signature[0];
     return data[0];
   } catch (error) {
@@ -160,7 +179,7 @@ export async function fetchDocumentById(id: string) {
     }));*/
 
     const Document:Document = data[0] as Document;
-    console.log(Document); // Document is an empty array []
+    //console.log(Document); // Document is an empty array []
     return Document;
     //return data[0] as Document;
   } catch (error) {
@@ -183,7 +202,7 @@ export async function fetchSignatureByUserId(id: string):Promise<Signature> {
       ...Signature,
     }));
 
-    console.log(Signature); // Document is an empty array []
+    //console.log(Signature); // Document is an empty array []
     return data[0] as Signature;
   } catch (error) {
     console.error('Database Error:', error);

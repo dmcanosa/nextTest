@@ -1,27 +1,17 @@
-//import { fetchFilteredSignatures } from 'app/lib/data';
-//import { NextApiRequest } from 'next';
-//import { SearchParams } from 'next/dist/server/request/search-params';
+import { fetchSignaturesById } from 'app/lib/data';
 import { NextURL } from 'next/dist/server/web/next-url';
 import { NextRequest } from 'next/server';
 
-export const dynamic = 'force-static'
+//export const dynamic = 'force-static'
 
 export async function GET(request: NextRequest) {
-  //const { nextUrl: { searchParams } } = request;
-  //const urlSearchParams = new URLSearchParams(search);
-  //const body = await request;
-  //const urlSearchParams = new URLSearchParams(request.nextUrl.searchParams);
-  //const params2 = Object.fromEntries(urlSearchParams.entries());
-  //const { : { href, search }} = request;
-  //console.log('route: ',body);
-  console.log('route: ',(request.nextUrl as NextURL));
-  console.log('route: ',(request.nextUrl as NextURL).searchParams.get('id'));
+  const { nextUrl: { searchParams } } = request;
+  console.log('route: ',searchParams.get('id'));
+  const userId = searchParams.get('id');
   
-  //console.log('params: ',request.nextUrl.searchParams);
-  //console.log('req: ',searchParams.get('user_id'));
-  //console.log('req: ',urlSearchParams.get('user_id'));
-  //console.log('entries: ', params2);
+  const signatures = await fetchSignaturesById(userId);
+  const jsonSigs = JSON.stringify(signatures);
+  //console.log('sigs: ',jsonSigs);
 
-
-  return Response.json(['test', 'json', 'response']);
+  return Response.json(jsonSigs);
 }
