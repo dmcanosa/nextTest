@@ -1,5 +1,5 @@
 import { fetchSignaturesById } from 'app/lib/data';
-import { NextURL } from 'next/dist/server/web/next-url';
+//import { NextURL } from 'next/dist/server/web/next-url';
 import { NextRequest } from 'next/server';
 
 //export const dynamic = 'force-static'

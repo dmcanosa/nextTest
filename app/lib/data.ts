@@ -79,9 +79,9 @@ export async function fetchSignatureById(id: string) {
       WHERE Signatures.id = ${id};
     `;
 
-    const Signature = data.map((Signature) => ({
+    /*const Signature = data.map((Signature) => ({
       ...Signature,
-    }));
+    }));*/
 
     //console.log(Signature); // Signature is an empty array []
     //return Signature[0];
