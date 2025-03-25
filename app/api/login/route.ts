@@ -1,9 +1,9 @@
 import { signIn } from 'auth';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest/*, NextResponse*/ } from 'next/server';
 
 //export const dynamic = 'force-static'
 
-export async function GET(request: NextRequest, response: NextResponse) {
+export async function GET(request: NextRequest/*, response: NextResponse*/) {
   const email = request.headers.get('email');
   const password = request.headers.get('password');
   const fd:FormData = new FormData();
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
         redirect: false
       });
       console.log('status: ',status);
-      console.log('res: ',response);
+      //console.log('res: ',response);
     
   }catch(error){
     console.log('--'+error+'--');
