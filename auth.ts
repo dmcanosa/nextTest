@@ -54,9 +54,11 @@ export const { auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    /*async signIn({ user }) {
-      //...
-    },*/
+    async signIn({ user }) {
+      if (user) return true;
+
+      return false;
+    },
   },
 })
 
