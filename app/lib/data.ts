@@ -142,6 +142,29 @@ export async function fetchFilteredDocuments(
   }
 }
 
+export async function fetchDocumentsById(
+  user_id: string
+) {
+  try {
+    //const cookieStore = await cookies();
+    //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+    //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    
+    const Documents = await sql`
+      SELECT *
+      FROM documents 
+      WHERE user_id = ${user_id}
+      AND active = true
+    `;
+
+    return Documents;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch documents.');
+  }
+}
+
 export async function fetchDocumentsPages(query: string) {
   try {
     console.log(query);

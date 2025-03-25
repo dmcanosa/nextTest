@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import { authConfig } from './auth.config';
 import { z } from 'zod';
 import { neon } from '@neondatabase/serverless';
@@ -15,6 +16,10 @@ import NextCrypto from 'next-crypto';
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
+    GoogleProvider({
+      //clientId: process.env.GOOGLE_CLIENT_ID,
+      //clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
       async authorize(credentials) {
         console.log(credentials);
@@ -28,6 +33,7 @@ export const { auth, signIn, signOut } = NextAuth({
           const user = await getUserByEmail(email);
           console.log('user auth.js:',user);
           if (!user) return null;
+          //if (!user) return 'null';
           const passwordsMatch = await bcrypt.compare(password, user.password);
           console.log(passwordsMatch);
           
@@ -47,6 +53,11 @@ export const { auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    /*async signIn({ user }) {
+      //...
+    },*/
+  },
 })
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
@@ -132,6 +143,10 @@ export async function signUp(formData:FormData){
       console.error('Failed to fetch user:', error);
       throw new Error('Failed to fetch user.');
     }
+  }else{
+    console.log('Mail is already registered');
+    return null;
+    //throw new Error('Mail is already registered');
   }
 }
 ;
