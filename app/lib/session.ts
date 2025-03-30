@@ -25,17 +25,12 @@ export async function decrypt(session: string | undefined = '') {
   }
 }
  
-/*export async function createSession(userId: string) {
+export async function createSession(userId: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   const sp:SessionPayload = { userId, expiresAt };
   const session = await encrypt(sp);
   const cookieStore = await cookies()
   cookieStore.set('session', session, {
-  
-  //(await cookies()).set(
-  //  'session',
-  //  session,
-  //  {
       httpOnly: true,
       secure: true,
       expires: expiresAt,
@@ -44,7 +39,7 @@ export async function decrypt(session: string | undefined = '') {
     }
   )
   console.log('createSession!');
-}*/
+}
 
 export async function updateSession() {
   const session = (await cookies()).get('authjs.session-token')?.value

@@ -87,12 +87,12 @@ export default async function SignaturesTable({
               </tr>
             </thead>
             <tbody className="bg-white" key={Math.random()}>
-              {decryptedSignatures?.map((signature) => (
+              {decryptedSignatures?.map((signature, index) => (
                 <tr
-                  key={signature.key}
+                  key={index}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
-                  <td key={signature.key} className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3">
                     { signature.data &&
                       <Image 
                         src={signature.data.split('==')[0]}
@@ -103,17 +103,17 @@ export default async function SignaturesTable({
                       />
                     } 
                   </td>
-                  <td key={signature.key} className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3">
                     <span>
                       {signature.active ? 'ACTIVA' : 'INACTIVA'}
                     </span>
                   </td>
-                  <td key={signature.key} className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3">
                     <span>
                       {signature.created}
                     </span>
                   </td>
-                  <td key={signature.key} className="whitespace-nowrap py-3 pl-6 pr-3">
+                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       {/*<UpdateSignature id={signature.id} /> */}
                       {signature.active &&  

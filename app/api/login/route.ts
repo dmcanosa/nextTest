@@ -18,8 +18,6 @@ export async function GET(request: NextRequest/*, response: NextResponse*/) {
         redirect: false
       });
       console.log('status: ',status);
-      //console.log('res: ',response);
-    
   }catch(error){
     console.log('--'+error+'--');
     console.log('invalid CREDENTIALS');
