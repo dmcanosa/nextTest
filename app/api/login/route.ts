@@ -12,11 +12,6 @@ export async function GET(request: NextRequest) {
 
   const email = request.headers.get('email');
   const password = request.headers.get('password');
-  //const redirect = false;
-  const fd:FormData = new FormData();
-  fd.append('email', email);
-  fd.append('password', password);
-  //fd.append('redirect', redirect);
       
   try{
     const status = await signIn('credentials', 
@@ -60,9 +55,4 @@ export async function GET(request: NextRequest) {
     });
     //return Response.json({'status': error});
   }
-  //const jsonSigs = JSON.stringify(signatures);
-  //console.log('req: ',request.headers);
-  //console.log('req: ',request.headers.get('email'));
-  
-  //return Response.json({'status':status});
 }
