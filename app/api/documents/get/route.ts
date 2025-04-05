@@ -1,12 +1,11 @@
 import { fetchDocumentsById } from 'app/lib/data';
-import { auth } from "@/auth";
+//import { auth } from "@/auth";
 import { NextRequest, NextResponse } from 'next/server';
 import NextCrypto from 'next-crypto';
 
 //export const dynamic = 'force-static'
 
-
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
   const cookieHash = req.headers.get('token');
   const userId = await crypto.decrypt(cookieHash);
