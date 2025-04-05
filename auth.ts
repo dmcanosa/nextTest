@@ -13,7 +13,7 @@ import NextCrypto from 'next-crypto';
 
 //import { createSession } from './app/lib/session';
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     GoogleProvider({
@@ -35,7 +35,7 @@ export const { auth, signIn, signOut } = NextAuth({
           if (!user) return null;
           //if (!user) return 'null';
           const passwordsMatch = await bcrypt.compare(password, user.password);
-          console.log(passwordsMatch);
+          console.log('passwords match?: ',passwordsMatch);
           
           if (passwordsMatch){
             const cookieStore = await cookies();
@@ -53,11 +53,22 @@ export const { auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  debug: true,
   callbacks: {
-    async signIn({ user }) {
-      if (user) return true;
+    async signIn({ user, account, profile, email, credentials }) {
+      if (user){
+        console.log('callback signin user?: ', user);
+        console.log('callback signin account?: ', account);
+        console.log('callback signin profile?: ', profile);
+        console.log('callback signin email?: ', email);
+        console.log('callback signin credentials?: ', credentials);
+        
+        return true;
+      }else{
+        console.log('callback signin user FALSE');
+        return false;
+      } 
 
-      return false;
     },
   },
 })

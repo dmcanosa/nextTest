@@ -1,18 +1,29 @@
-//import { signIn } from 'auth';
 import { fetchDocumentsById } from 'app/lib/data';
-
-import { NextRequest } from 'next/server';
+import { auth } from "@/auth";
+import { NextRequest, NextResponse } from 'next/server';
+import NextCrypto from 'next-crypto';
 
 //export const dynamic = 'force-static'
 
-export async function GET(request: NextRequest) {
-  const { nextUrl: { searchParams } } = request;
-  console.log('route: ',searchParams.get('id'));
-  const userId = searchParams.get('id');
+
+export async function GET(req: NextRequest, res: NextResponse) {
+  const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+  const cookieHash = req.headers.get('token');
+  const userId = await crypto.decrypt(cookieHash);
   
   const docs = await fetchDocumentsById(userId);
-  //console.log('req: ',request.headers.get('email'));
-  const res = JSON.stringify(docs);
+  //res = JSON.stringify(docs);
   
-  return Response.json(res);
+  return NextResponse.json({
+    'success':true, 
+    'docs': docs
+  });
 }
+  
+/*export const GET = auth(function GET(req) {
+  if (req.auth){
+    
+    return NextResponse.json(req.auth)
+  } 
+  return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+})*/
