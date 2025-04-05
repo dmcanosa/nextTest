@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 
 //export const dynamic = 'force-static'
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const fd:FormData = new FormData();
   
   fd.append('template_name', request.headers.get('template_name'));

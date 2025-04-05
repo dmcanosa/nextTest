@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   const fd:FormData = new FormData();
   fd.append('canvasString', sig);
   const state:State = { errors: { data: [] }, message: '' };
-  const status = await createSignature(state, fd);
+  const status = await createSignature(state, fd, false);
   
   console.log('status: ',status);
 

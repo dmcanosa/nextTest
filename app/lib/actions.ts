@@ -111,7 +111,7 @@ export async function register(
   }
 }
 
-export async function createSignature(prevState: State, formData: FormData) {
+export async function createSignature(prevState: State, formData: FormData, needsRedirect: boolean = true) {
   const validatedFields = CreateSignature.safeParse({
     data: formData.get('canvasString'),
   });
@@ -148,8 +148,10 @@ export async function createSignature(prevState: State, formData: FormData) {
     };
   }
 
-  revalidatePath('/dashboard/signatures');
-  redirect('/dashboard/signatures');
+  if(needsRedirect){
+    revalidatePath('/dashboard/signatures');
+    redirect('/dashboard/signatures');
+  }
 }
 
 /*const UpdateSignature = FormSchema.omit({ id: true, date: true });
