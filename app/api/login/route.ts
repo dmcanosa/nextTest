@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
         'status':status, 
         'user':{
           'encuid': uid,
-          //'email': authStatus.user.email,
-          //'name': authStatus.user.name,
+          'email': authStatus?.user?.email || '',
+          'name': authStatus?.user?.name || '',
         }
       });
   }catch(error){
