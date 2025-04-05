@@ -193,7 +193,7 @@ export async function deleteSignature(id: string) {
   }
 }
 
-export async function createDocument(prevState: docState, formData: FormData) {
+export async function createDocument(prevState: docState, formData: FormData, needsRedirect: boolean = true, userId:string = '') {
   const validatedFields = CreateDocument.safeParse({
     signature_id: formData.get('signature_id'),
     template_name: formData.get('template_name'),
@@ -215,13 +215,15 @@ export async function createDocument(prevState: docState, formData: FormData) {
   const template_b64 = validatedFields.data.template_b64;
   const signed_b64 = validatedFields.data.signed_b64;
   
+  if(userId == '')
+    userId = decrypted;  
   try {
-    const user:User = await getUserById(decrypted);  
+    const user:User = await getUserById(userId);  
     if(user){
       const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
         INSERT INTO documents (template_name, template_data, signed_document, signed, signature_id, user_id, date_signed)
-        VALUES (${template_name}, ${template_b64}, ${signed_b64}, true, ${signature_id}, ${decrypted}, NOW())
+        VALUES (${template_name}, ${template_b64}, ${signed_b64}, true, ${signature_id}, ${userId}, NOW())
       `;
     }
   } catch (error) {
@@ -230,8 +232,10 @@ export async function createDocument(prevState: docState, formData: FormData) {
     };
   }
 
-  revalidatePath('/dashboard/documents');
-  redirect('/dashboard/documents');
+  if(needsRedirect){
+    revalidatePath('/dashboard/documents');
+    redirect('/dashboard/documents');
+  }
 }
 
 export async function downloadDocument(id: string) {

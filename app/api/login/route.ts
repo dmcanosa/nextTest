@@ -1,6 +1,5 @@
 import { signIn } from 'auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from "@/auth";
 import { cookies } from 'next/headers';
 //import { User } from 'app/lib/definitions';
 import NextCrypto from 'next-crypto';
@@ -30,19 +29,11 @@ export async function GET(request: NextRequest) {
       console.log('user_id: ',uid);
       console.log('user_id: ',decrypted);
       
-      //cookieStore.set('user_id', encrypted);
-      
-      const authStatus = await auth();
-      console.log('authstatus: ',authStatus);
-      //console.log('res: ',response);
-      //return response;
       return NextResponse.json({
         'success':true, 
         'status':status, 
         'user':{
           'encuid': uid,
-        //  'email': authStatus?.user?.email || '',
-        //  'name': authStatus?.user?.name || '',
         }
       });
   }catch(error){
@@ -53,6 +44,5 @@ export async function GET(request: NextRequest) {
       'status':error, 
       'user':{}
     });
-    //return Response.json({'status': error});
   }
 }

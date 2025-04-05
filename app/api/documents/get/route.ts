@@ -10,13 +10,22 @@ export async function GET(req: NextRequest) {
   const cookieHash = req.headers.get('token');
   const userId = await crypto.decrypt(cookieHash);
   
-  const docs = await fetchDocumentsById(userId);
-  //res = JSON.stringify(docs);
-  
-  return NextResponse.json({
-    'success':true, 
-    'docs': docs
-  });
+  try{
+    const docs = await fetchDocumentsById(userId);
+    //res = JSON.stringify(docs);
+    
+    return NextResponse.json({
+      'success':true, 
+      'docs': docs
+    });
+  }catch(error){
+    console.log('--'+error+'--');
+    return NextResponse.json({
+      'success':false, 
+      'status':error, 
+      'user':{}
+    });
+  }
 }
   
 /*export const GET = auth(function GET(req) {

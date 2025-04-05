@@ -13,18 +13,23 @@ export async function POST(req: NextRequest) {
   fd.append('canvasString', sig);
   const state:State = { errors: { data: [] }, message: '' };
   
-  const cookieHash = req.headers.get('token');
-  const userId = await crypto.decrypt(cookieHash);
-  const status = await createSignature(state, fd, false, userId);
-  
-  console.log('status: ',status);
+  try{
+    const cookieHash = req.headers.get('token');
+    const userId = await crypto.decrypt(cookieHash);
+    const status = await createSignature(state, fd, false, userId);
+    
+    console.log('status: ',status);
 
-  //const jsonSigs = JSON.stringify(signatures);
-  //console.log('sigs: ',jsonSigs);
-
-  return NextResponse.json({
-          'success':true, 
-          'status':status, 
-          
-        });
+    return NextResponse.json({
+      'success':true, 
+      'status':status, 
+    });
+  }catch(error){
+    console.log('--'+error+'--');
+    return NextResponse.json({
+      'success':false, 
+      'status':error, 
+      'user':{}
+    });
+  }      
 }
