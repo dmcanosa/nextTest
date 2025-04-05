@@ -7,7 +7,7 @@ import { cookies } from 'next/headers';
 
 //export const dynamic = 'force-static'
 
-export async function GET(request: NextRequest, response: NextResponse) {
+export async function GET(request: NextRequest) {
   //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
 
   const email = request.headers.get('email');
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
       
       const authStatus = await auth();
       console.log('authstatus: ',authStatus);
-      console.log('res: ',response);
+      //console.log('res: ',response);
       //return response;
       return NextResponse.json({
         'success':true, 
