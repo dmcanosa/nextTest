@@ -111,7 +111,7 @@ export async function register(
   }
 }
 
-export async function createSignature(prevState: State, formData: FormData, needsRedirect: boolean = true) {
+export async function createSignature(prevState: State, formData: FormData, needsRedirect: boolean = true, userId:string = '') {
   const validatedFields = CreateSignature.safeParse({
     data: formData.get('canvasString'),
   });
@@ -123,23 +123,24 @@ export async function createSignature(prevState: State, formData: FormData, need
     };
   }
   
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
   const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
   const signature = await crypto.encrypt(validatedFields.data.data);
-  
+  if(userId == '')
+    userId = decrypted;  
   try {
-    const user:User = await getUserById(decrypted);  
+    const user:User = await getUserById(userId);  
     if(user){
       const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
         UPDATE signatures 
           SET active = false 
-          WHERE user_id = ${decrypted}
+          WHERE user_id = ${userId}
           AND active = true
       `;
       await sql`
         INSERT INTO signatures (data, created, active, user_id)
-        VALUES (${signature}, NOW(), true, ${decrypted})
+        VALUES (${signature}, NOW(), true, ${userId})
       `;
     }
   } catch (error) {
