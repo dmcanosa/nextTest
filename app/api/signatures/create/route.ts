@@ -1,10 +1,10 @@
 import { createSignature, State } from 'app/lib/actions';
 //import { NextURL } from 'next/dist/server/web/next-url';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 //export const dynamic = 'force-static'
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const sig = request.headers.get('signature');
   const fd:FormData = new FormData();
   fd.append('canvasString', sig);
@@ -16,5 +16,9 @@ export async function GET(request: NextRequest) {
   //const jsonSigs = JSON.stringify(signatures);
   //console.log('sigs: ',jsonSigs);
 
-  return Response.json([]);
+  return NextResponse.json({
+          'success':true, 
+          'status':status, 
+          
+        });
 }
