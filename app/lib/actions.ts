@@ -129,9 +129,6 @@ export async function register(
       const dataAuth = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
-        data: {
-          confirmation_sent_at: Date.now(),
-        },
       }
       console.log('signup data: ',dataAuth)
       const { error } = await supabase.auth.signUp(dataAuth)
