@@ -4,9 +4,9 @@ import { z } from 'zod';
 //import { sql } from '@vercel/postgres';
 import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { /*signUp, /*signIn,*/ getUserById} from '@/auth';
 import { AuthError/*, User*/ } from 'next-auth';
-import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { User } from 'app/lib/definitions';
 import NextCrypto from 'next-crypto';
@@ -63,12 +63,15 @@ export async function authenticate(
       email: formData.get('email') as string,
       password: formData.get('password') as string,
     }
+    console.log('login data: ',data)
+      
     const { error } = await supabase.auth.signInWithPassword(data)
     if (error) {
+      console.log('signup error: ',error);
       redirect('/error')
     }
-    revalidatePath('/', 'layout')
-    redirect('/')
+    revalidatePath('/dashboard', 'layout')
+    redirect('/dashboard')
     
     //console.log('authenticate!!!', formData);
     //en flow de register pasa por aca pero no hace bien el signin
@@ -126,7 +129,9 @@ export async function register(
       const dataAuth = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
-        //email_confirm: false,
+        data: {
+          confirmation_sent_at: Date.now(),
+        },
       }
       console.log('signup data: ',dataAuth)
       const { error } = await supabase.auth.signUp(dataAuth)
@@ -134,8 +139,8 @@ export async function register(
         console.log('signup error: ',error);
         redirect('/error');
       }
-      revalidatePath('/', 'layout');
-      redirect('/');
+      revalidatePath('/dashboard', 'layout');
+      redirect('/dashboard');
 
       //next auth flow
       //await authenticate('credentials', formData);

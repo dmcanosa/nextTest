@@ -4,7 +4,9 @@ import AcmeLogo from '@/app/ui/acme-logo';
 import { PowerIcon } from '@heroicons/react/24/outline';
 //import { signOut } from '@/auth';
 //import { cookies } from 'next/headers';
-import { createClient } from 'app/lib/supabase/client'
+import { createClient } from 'app/lib/supabase/server'
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 //import { revalidatePath } from 'next/cache';
 //import { redirect } from 'next/navigation';
@@ -31,6 +33,10 @@ export default function SideNav() {
             
             const supabase = await createClient();
             const { error } = await supabase.auth.signOut();
+            if(!error){
+              revalidatePath('/', 'layout');
+              redirect('/');
+            }
             console.log(error);
             //await signOut({ redirectTo: '/', redirect:true });
           }}
