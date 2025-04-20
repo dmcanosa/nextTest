@@ -34,8 +34,8 @@ export default function SideNav() {
             const supabase = await createClient();
             const { error } = await supabase.auth.signOut();
             if(!error){
-              revalidatePath('/', 'layout');
-              redirect('/');
+              revalidatePath('/login', 'layout');
+              redirect('/login');
             }
             console.log(error);
             //await signOut({ redirectTo: '/', redirect:true });
