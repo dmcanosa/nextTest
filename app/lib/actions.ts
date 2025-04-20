@@ -4,7 +4,7 @@ import { z } from 'zod';
 //import { sql } from '@vercel/postgres';
 import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
-import { signUp, signIn, getUserById} from '@/auth';
+import { /*signUp, /*signIn,*/ getUserById} from '@/auth';
 import { AuthError/*, User*/ } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
@@ -14,6 +14,7 @@ import { fetchDocumentById/*, saveDataToFile*/ } from './data';
 //import { fetchSignatureByUserId } from '@/app/lib/data';
 //import { Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
+import { createClient } from 'app/lib/supabase/server';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -55,14 +56,34 @@ export async function authenticate(
   formData: FormData,
 ) {
   try {
-    console.log('authenticate!!!', formData);
+    const supabase = await createClient()
+    // type-casting here for convenience
+    // in practice, you should validate your inputs
+    const data = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+    }
+    const { error } = await supabase.auth.signInWithPassword(data)
+    if (error) {
+      redirect('/error')
+    }
+    revalidatePath('/', 'layout')
+    redirect('/')
+    
+    //console.log('authenticate!!!', formData);
     //en flow de register pasa por aca pero no hace bien el signin
-    const user = await signIn('credentials', formData);
-    console.log('222authenticate!!!', user);
+    
+    //next auth flow
+    //const user = await signIn('credentials', formData);
+    //next auth flow
+
+
+
+    /*console.log('222authenticate!!!', user);
     if(user){
       console.log('---->logged in', user);
       //redirect('/dashboard');  
-    }
+    }*/
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -82,22 +103,43 @@ export async function register(
 ) {
   try {
     //console.log('formdata: ',formData);
-    const data:User | { errors: { email?: string[]; name?: string[]; password?: string[]; password2?: string[]; }} = await signUp(formData);
-    console.log('data signup register: ',data);
+    const supabase = await createClient();
+    
+    //nextauth flow
+    //const data:User | { errors: { email?: string[]; name?: string[]; password?: string[]; password2?: string[]; }} = await signUp(formData);
+    //nextauth flow
+    
+    //console.log('data signup register: ',data);
     //store user ID
     
-    if(data && data['errors']){
+    /*if(data && data['errors']){
       return Object.values(data['errors'])[0][0];
     }else if(!data){
       return ['Mail is already registered'];
-    }else{  
-      const cookieStore = await cookies();
+    }else{*/  
+      /*const cookieStore = await cookies();
       const encrypted = await crypto.encrypt((data as User).id);
       console.log('user_id: ',data['id']);
       cookieStore.set('user_id', encrypted);
-      console.log('errors else:');
-      await authenticate('credentials', formData);
-    }  
+      console.log('errors else:');*/
+      
+      const dataAuth = {
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
+        //email_confirm: false,
+      }
+      console.log('signup data: ',dataAuth)
+      const { error } = await supabase.auth.signUp(dataAuth)
+      if (error) {
+        console.log('signup error: ',error);
+        redirect('/error');
+      }
+      revalidatePath('/', 'layout');
+      redirect('/');
+
+      //next auth flow
+      //await authenticate('credentials', formData);
+    //}  
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

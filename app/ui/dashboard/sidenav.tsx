@@ -2,8 +2,9 @@ import Link from 'next/link';
 import NavLinks from '@/app/ui/dashboard/nav-links';
 import AcmeLogo from '@/app/ui/acme-logo';
 import { PowerIcon } from '@heroicons/react/24/outline';
-import { signOut } from '@/auth';
-import { cookies } from 'next/headers';
+//import { signOut } from '@/auth';
+//import { cookies } from 'next/headers';
+import { createClient } from 'app/lib/supabase/client'
 
 //import { revalidatePath } from 'next/cache';
 //import { redirect } from 'next/navigation';
@@ -25,9 +26,13 @@ export default function SideNav() {
         <form
           action={async () => {
             'use server';
-            const cookieStore = await cookies()
-            cookieStore.delete('user_id');    
-            await signOut({ redirectTo: '/', redirect:true });
+            //const cookieStore = await cookies()
+            //cookieStore.delete('user_id');    
+            
+            const supabase = await createClient();
+            const { error } = await supabase.auth.signOut();
+            console.log(error);
+            //await signOut({ redirectTo: '/', redirect:true });
           }}
         >
           <button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
