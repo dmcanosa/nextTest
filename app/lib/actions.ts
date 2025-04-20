@@ -183,11 +183,22 @@ export async function createSignature(prevState: State, formData: FormData, need
       
       const { error } = await supabase
         .from('signatures')
-        .insert({ data: signature, active: true, user_id: userId })
+        .update({ active: false })
+        .eq('user_id', userId)
       
-      console.log(error);  
+      console.log(error);
       
-      const sql = neon(`${process.env.DATABASE_URL}`);
+      (async function () {
+        const { error } = await supabase
+          .from('signatures')
+          .insert({ data: signature, active: true, user_id: userId })
+        
+        console.log(error);  
+      })();
+    
+      
+      
+      /*const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
         UPDATE signatures 
           SET active = false 
@@ -197,7 +208,7 @@ export async function createSignature(prevState: State, formData: FormData, need
       await sql`
         INSERT INTO signatures (data, created, active, user_id)
         VALUES (${signature}, NOW(), true, ${userId})
-      `;
+      `;*/
     //}
   } catch (error) {
     return {
