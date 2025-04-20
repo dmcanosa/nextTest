@@ -167,14 +167,26 @@ export async function createSignature(prevState: State, formData: FormData, need
     };
   }
   
-  const cookieStore = await cookies();
-  const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+  console.log('user on create sig: ', user);
+
+  //const cookieStore = await cookies();
+  //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+  const decrypted = user.data.user.id as string;
   const signature = await crypto.encrypt(validatedFields.data.data);
   if(userId == '')
     userId = decrypted;  
   try {
-    const user:User = await getUserById(userId);  
-    if(user){
+    //const user:User = await getUserById(userId);  
+    //if(user){
+      
+      const { error } = await supabase
+        .from('signatures')
+        .insert({ data: signature, active: true, user_id: userId })
+      
+      console.log(error);  
+      
       const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
         UPDATE signatures 
@@ -186,7 +198,7 @@ export async function createSignature(prevState: State, formData: FormData, need
         INSERT INTO signatures (data, created, active, user_id)
         VALUES (${signature}, NOW(), true, ${userId})
       `;
-    }
+    //}
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create Signature.'+error,
