@@ -4,6 +4,7 @@ import { Document, Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
 import NextCrypto from 'next-crypto';
 //import { getSession } from './session';
+import { createClient } from 'app/lib/supabase/server';
 
 const ITEMS_PER_PAGE = 5;
 const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
@@ -13,20 +14,36 @@ export async function fetchFilteredSignatures(
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  console.log(query);
+  console.log(query, offset);
   try {
-    const cookieStore = await cookies();
+    const supabase = await createClient()
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user.id as string;
+
+    const { data, error } = await supabase
+      .from('signatures')
+      .select()
+      .eq('user_id', userId)
+      .limit(ITEMS_PER_PAGE)
+      .range(offset, (offset + ITEMS_PER_PAGE))
+      
+    console.log(error);
+    //console.log('data on fetch sigs: ',data);
+      
+
+    //const cookieStore = await cookies();
     //console.log('cookie: ',cookieStore.get('user_id').value);
-    const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+    //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     //console.log('decrypted cookie: ',decrypted);
     
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    /*const sql = neon(`${process.env.DATABASE_URL}`);
     const Signatures = await sql`
       SELECT data, active, DATE(created) as created
       FROM signatures WHERE user_id = ${decrypted}
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
-    return Signatures;
+    `;*/
+    return data;
+    //return Signatures;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Signatures.');
@@ -55,14 +72,31 @@ export async function fetchSignaturesById(id: string) {
 export async function fetchSignaturesPages(query: string) {
   try {
     console.log(query);
-    const cookieStore = await cookies()
+    const supabase = await createClient()
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user.id as string;
+
+    const { count, error } = await supabase
+      .from('signatures')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      
+    console.log(error);
+    console.log('data on fetch sigs count: ',count);
+    
+
+    
+    
+    /*const cookieStore = await cookies()
     //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     const sql = neon(`${process.env.DATABASE_URL}`);
     const count = await sql`SELECT COUNT(*)
       FROM signatures WHERE user_id = ${decrypted}
-    `;  
-    const totalPages = Math.ceil(Number(count[0].count) / ITEMS_PER_PAGE);
+    `;*/  
+    const totalPages = Math.ceil(Number(count) / ITEMS_PER_PAGE);
+    console.log('total: ',totalPages);
+    
     return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
@@ -92,7 +126,7 @@ export async function fetchSignatureById(id: string) {
   }
 }
 
-export async function fetchUsersAndTotalSignatures(
+/*export async function fetchUsersAndTotalSignatures(
   query: string,
   currentPage: number,
 ) {
@@ -112,7 +146,7 @@ export async function fetchUsersAndTotalSignatures(
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Signatures.');
   }
-}
+}*/
 
 const DOCUMENTS_PER_PAGE = 5;
 export async function fetchFilteredDocuments(
