@@ -15,6 +15,8 @@ export async function fetchFilteredSignatures(
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   console.log(query, offset);
+  console.log('offset: ', offset);
+  
   try {
     const supabase = await createClient()
     const user = await supabase.auth.getUser();
@@ -25,9 +27,10 @@ export async function fetchFilteredSignatures(
       .select()
       .eq('user_id', userId)
       .limit(ITEMS_PER_PAGE)
-      .range(offset, (offset + ITEMS_PER_PAGE))
+      .range(offset, (offset + ITEMS_PER_PAGE - 1))
       
     console.log(error);
+    console.log('range: ',offset+' '+(offset + ITEMS_PER_PAGE - 1));
     //console.log('data on fetch sigs: ',data);
       
 
