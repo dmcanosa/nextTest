@@ -35,7 +35,8 @@ export default async function DocumentsTable({
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {document.date_signed.toDateString()}
+                    {/*document.date_signed.toDateString()}*/}
+                    {document.date_signed}
                     </p>
                     <p className="text-xl font-medium">
                       {document.signed ? 'FIRMADO' : 'SIN FIRMA'}
@@ -92,7 +93,8 @@ export default async function DocumentsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <span>
-                      {document.date_signed.toDateString()}
+                    {/*document.date_signed.toDateString()}*/}
+                    {document.date_signed}
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">

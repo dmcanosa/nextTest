@@ -1,13 +1,13 @@
 import { neon } from '@neondatabase/serverless';
-import { cookies } from 'next/headers';
+//import { cookies } from 'next/headers';
 import { Document, Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
-import NextCrypto from 'next-crypto';
+//import NextCrypto from 'next-crypto';
 //import { getSession } from './session';
 import { createClient } from 'app/lib/supabase/server';
 
 const ITEMS_PER_PAGE = 5;
-const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+//const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
 
 export async function fetchFilteredSignatures(
   query: string,
@@ -159,7 +159,22 @@ export async function fetchFilteredDocuments(
   const offset = (currentPage - 1) * DOCUMENTS_PER_PAGE;
   console.log(query);
   try {
-    const cookieStore = await cookies();
+    const supabase = await createClient()
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user.id as string;
+
+    const { data, error } = await supabase
+      .from('documents')
+      .select()
+      .eq('user_id', userId)
+      .limit(DOCUMENTS_PER_PAGE)
+      .range(offset, (offset + DOCUMENTS_PER_PAGE - 1))
+      
+    console.log(error);
+    
+    return data;
+    
+    /*const cookieStore = await cookies();
     //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     const sql = neon(`${process.env.DATABASE_URL}`);
@@ -172,7 +187,7 @@ export async function fetchFilteredDocuments(
       LIMIT ${DOCUMENTS_PER_PAGE} OFFSET ${offset}
     `;
 
-    return Documents;
+    return Documents;*/
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch documents.');
@@ -205,7 +220,23 @@ export async function fetchDocumentsById(
 export async function fetchDocumentsPages(query: string) {
   try {
     console.log(query);
-    const cookieStore = await cookies()
+    const supabase = await createClient()
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user.id as string;
+
+    const { count, error } = await supabase
+      .from('documents')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      
+    console.log(error);
+    console.log('data on fetch docs count: ',count);
+     
+    const totalPages = Math.ceil(Number(count) / DOCUMENTS_PER_PAGE);
+    
+    
+    
+    /*const cookieStore = await cookies()
     //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
     const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
     const sql = neon(`${process.env.DATABASE_URL}`);
@@ -217,7 +248,8 @@ export async function fetchDocumentsPages(query: string) {
     `;  
     
     const totalPages = Math.ceil(Number(count[0].count) / DOCUMENTS_PER_PAGE);
-    return totalPages;
+    */
+   return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of Documents.');
@@ -250,20 +282,33 @@ export async function fetchDocumentById(id: string) {
 
 export async function fetchSignatureByUserId(id: string):Promise<Signature> {
   try {
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    const supabase = await createClient()
+    //const user = await supabase.auth.getUser();
+    //const userId = user.data.user.id as string;
+
+    const { data, error } = await supabase
+      .from('signatures')
+      .select()
+      .eq('active', true)
+      .eq('user_id', id)
+    console.log(error);
+    console.log('fetchsigbyid: ',data);
+    
+    return data[0];
+    /*const sql = neon(`${process.env.DATABASE_URL}`);
     const data = await sql`
       SELECT *
       FROM signatures
       WHERE active = true
       AND signatures.user_id = ${id};
-    `;
+    `;*/
 
     /*const Signature = data.map((Signature) => ({
       ...Signature,
     }));*/
 
     //console.log(Signature); // Document is an empty array []
-    return data[0] as Signature;
+    //return data[0] as Signature;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Document.');

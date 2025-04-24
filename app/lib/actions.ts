@@ -5,10 +5,10 @@ import { z } from 'zod';
 import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { /*signUp, /*signIn,*/ getUserById} from '@/auth';
+//import { /*signUp, /*signIn,*/ getUserById} from '@/auth';
 import { AuthError/*, User*/ } from 'next-auth';
-import { cookies } from 'next/headers';
-import { User } from 'app/lib/definitions';
+//import { cookies } from 'next/headers';
+//import { User } from 'app/lib/definitions';
 import NextCrypto from 'next-crypto';
 import { fetchDocumentById/*, saveDataToFile*/ } from './data';
 //import { fetchSignatureByUserId } from '@/app/lib/data';
@@ -268,6 +268,8 @@ export async function createDocument(prevState: docState, formData: FormData, ne
     signed_b64: formData.get('signed_b64'),
   });
 
+  console.log(userId);
+
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
@@ -275,24 +277,47 @@ export async function createDocument(prevState: docState, formData: FormData, ne
     };
   }
 
-  const cookieStore = await cookies()
-  const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
+  //const cookieStore = await cookies()
+  //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
   const template_name = validatedFields.data.template_name;
   const signature_id = validatedFields.data.signature_id;
   const template_b64 = validatedFields.data.template_b64;
   const signed_b64 = validatedFields.data.signed_b64;
   
-  if(userId == '')
-    userId = decrypted;  
+  /*if(userId == '')
+    userId = decrypted;*/  
   try {
-    const user:User = await getUserById(userId);  
+    const supabase = await createClient()
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user.id as string;
+
+    /*const { error } = await supabase
+      .from('signatures')
+      .insert({ data: signature, active: true, user_id: userId })*/
+        
+    const { error } = await supabase
+      .from('documents')
+      .insert({ 
+        template_name: template_name,  
+        template_data: template_b64,  
+        signed_document: signed_b64,  
+        signed: true,  
+        signature_id: signature_id,  
+        user_id: userId,  
+        //date_signed: NOW(),  
+        
+      });
+         
+    console.log(error);  
+    
+    /*const user:User = await getUserById(userId);  
     if(user){
       const sql = neon(`${process.env.DATABASE_URL}`);
       await sql`
         INSERT INTO documents (template_name, template_data, signed_document, signed, signature_id, user_id, date_signed)
         VALUES (${template_name}, ${template_b64}, ${signed_b64}, true, ${signature_id}, ${userId}, NOW())
       `;
-    }
+    }*/
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create document.'+error,
