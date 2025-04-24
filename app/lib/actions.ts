@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 //import { sql } from '@vercel/postgres';
-import { neon } from '@neondatabase/serverless';
+//import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 //import { /*signUp, /*signIn,*/ getUserById} from '@/auth';
@@ -250,9 +250,19 @@ export async function updateSignature(id: string, formData: FormData) {
 
 export async function deleteSignature(id: string) {
   try {
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    const supabase = await createClient();
+    
+    const { error } = await supabase
+      .from('signatures')
+      .update({ active: false })
+      .eq('id', id)
+    
+    console.log(error);
+    
+    /*const sql = neon(`${process.env.DATABASE_URL}`);
     //await sql`DELETE FROM signatures WHERE id = ${id}`;
     await sql`UPDATE signatures SET active = false WHERE id = ${id}`;
+    */
     revalidatePath('/dashboard/signatures');
     return { message: 'Deleted signature.' };
   } catch (error) {
@@ -387,9 +397,20 @@ export async function deleteDocument(id: string) {
   //console.log('del doc actions:',id);
 
   try {
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    const supabase = await createClient();
+    
+    const { error } = await supabase
+      .from('documents')
+      .update({ active: false })
+      .eq('id', id)
+    
+    console.log(error);
+    
+    
+    /*const sql = neon(`${process.env.DATABASE_URL}`);
     //await sql`DELETE FROM signatures WHERE id = ${id}`;
     await sql`UPDATE documents SET active = false WHERE id = ${id}`; //LIMIT 1`;
+    */
     revalidatePath('/dashboard/documents');
     return { message: 'Deleted Document.' };
   } catch (error) {
