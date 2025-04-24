@@ -258,19 +258,34 @@ export async function fetchDocumentsPages(query: string) {
 
 export async function fetchDocumentById(id: string) {
   try {
-    const sql = neon(`${process.env.DATABASE_URL}`);
+    const supabase = await createClient()
+    //const user = await supabase.auth.getUser();
+    //const userId = user.data.user.id as string;
+
+    const { data, error } = await supabase
+      .from('documents')
+      .select()
+      .eq('id', id)
+    console.log(error);
+    console.log('fetchdocbyid: ',data);
+    
+    const Document:Document = data[0] as Document;
+    return Document;
+    
+    
+    /*const sql = neon(`${process.env.DATABASE_URL}`);
     const data = await sql`
       SELECT *
       FROM documents
       WHERE documents.id = ${id} 
       LIMIT 1;
-    `;
+    `;*/
 
     /*const Document = data.map((Document) => ({
       ...Document,
     }));*/
 
-    const Document:Document = data[0] as Document;
+    //const Document:Document = data[0] as Document;
     //console.log(Document); // Document is an empty array []
     return Document;
     //return data[0] as Document;
