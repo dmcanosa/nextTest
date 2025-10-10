@@ -167,6 +167,7 @@ export async function fetchFilteredDocuments(
       .from('documents')
       .select()
       .eq('user_id', userId)
+      .eq('active', true)
       .limit(DOCUMENTS_PER_PAGE)
       .range(offset, (offset + DOCUMENTS_PER_PAGE - 1))
       

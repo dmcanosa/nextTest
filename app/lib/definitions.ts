@@ -96,6 +96,7 @@ export type Signature = {
 };
 
 export type Document = {
+  id: string;
   template_name: string;
   template_data: string;
   signature_id: string;
