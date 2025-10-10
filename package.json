@@ -41,18 +41,6 @@
     "overrides": {
       "@types/react": "latest",
       "@types/react-dom": "latest"
-    },
-    "onlyBuiltDependencies": [
-      "bcrypt",
-      "bufferutil",
-      "sharp",
-      "supabase",
-      "utf-8-validate"
-    ],
-    "ignoredBuiltDependencies": [
-      "bufferutil",
-      "sharp",
-      "utf-8-validate"
-    ]
+    }
   }
 }
