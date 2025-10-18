@@ -65,9 +65,11 @@ export async function authenticate(
     }
     console.log('login data: ',data)
       
-    const { error } = await supabase.auth.signInWithPassword(data)
-    if (error) {
-      console.log('signup error: ',error);
+    //const { error } = await supabase.auth.signInWithPassword(data)
+    const res = await supabase.auth.signInWithPassword(data)
+    console.log(res);
+    if (res.error) {
+      console.log('signup error: ',res.error);
       redirect('/error')
     }
     revalidatePath('/dashboard', 'layout')
@@ -129,13 +131,22 @@ export async function register(
       const dataAuth = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
+        name: formData.get('name') as string,
+        
       }
       console.log('signup data: ',dataAuth)
-      const { error } = await supabase.auth.signUp(dataAuth)
-      if (error) {
-        console.log('signup error: ',error);
+      //const { error } = await supabase.auth.signUp(dataAuth)
+      const res = await supabase.auth.signUp(dataAuth);
+      console.log(res);
+      if (res.error) {
+        console.log('signup error: ',res.error);
         redirect('/error');
       }
+      const res2 = await supabase
+        .from('users')
+        .insert({ id:res.data.user.id, name: dataAuth.name, email: dataAuth.email, password: dataAuth.password })
+      
+      console.log(res2.error);
       revalidatePath('/dashboard', 'layout');
       redirect('/dashboard');
 

@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless';
+//import { neon } from '@neondatabase/serverless';
 //import { cookies } from 'next/headers';
 import { Document, Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
@@ -53,7 +53,7 @@ export async function fetchFilteredSignatures(
   }
 }
 
-export async function fetchSignaturesById(id: string) {
+/*export async function fetchSignaturesById(id: string) {
   //const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   //console.log(query);
   try {
@@ -70,7 +70,7 @@ export async function fetchSignaturesById(id: string) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Signatures.');
   }
-}
+}*/
 
 export async function fetchSignaturesPages(query: string) {
   try {
@@ -107,7 +107,7 @@ export async function fetchSignaturesPages(query: string) {
   }
 }
 
-export async function fetchSignatureById(id: string) {
+/*export async function fetchSignatureById(id: string) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
     const data = await sql`
@@ -119,7 +119,7 @@ export async function fetchSignatureById(id: string) {
     /*const Signature = data.map((Signature) => ({
       ...Signature,
     }));*/
-
+/*
     //console.log(Signature); // Signature is an empty array []
     //return Signature[0];
     return data[0];
@@ -127,7 +127,7 @@ export async function fetchSignatureById(id: string) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch Signature.');
   }
-}
+}*/
 
 /*export async function fetchUsersAndTotalSignatures(
   query: string,
@@ -195,7 +195,7 @@ export async function fetchFilteredDocuments(
   }
 }
 
-export async function fetchDocumentsById(
+/*export async function fetchDocumentsById(
   user_id: string
 ) {
   try {
@@ -216,7 +216,7 @@ export async function fetchDocumentsById(
     console.error('Database Error:', error);
     throw new Error('Failed to fetch documents.');
   }
-}
+}*/
 
 export async function fetchDocumentsPages(query: string) {
   try {

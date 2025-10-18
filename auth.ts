@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { authConfig } from './auth.config';
+//import { authConfig } from './auth.config';
 import { z } from 'zod';
 import { neon } from '@neondatabase/serverless';
 //import { sql } from '@vercel/postgres';
@@ -12,7 +12,7 @@ import { cookies } from 'next/headers';
 import NextCrypto from 'next-crypto';
 
 //import { createSession } from './app/lib/session';
-
+/*
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
@@ -72,7 +72,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 })
-
+*/
+/*
 export async function getUserByEmail(email: string): Promise<User | undefined> {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
@@ -114,7 +115,8 @@ export async function getUserById(id: string): Promise<User | undefined> {
     throw new Error('Failed to fetch user.');
   }
 }
-
+*/
+/*
 export async function signUp(formData:FormData){
   const validatedFields = SignupFormSchema.safeParse({
     name: formData.get('name'),
@@ -143,7 +145,7 @@ export async function signUp(formData:FormData){
       //console.log('errors: ',newUserRes[0]);    
       const dbuser = await getUserByEmail(email);
       console.log('dbuser: ',dbuser);
-      //if (/*newUserRes.length > 0 &&*/ newUserRes['errors']){
+      //if (/*newUserRes.length > 0 &&*//* newUserRes['errors']){
       //  console.log('errors!');    
       //}
       if(!dbuser){
@@ -161,5 +163,5 @@ export async function signUp(formData:FormData){
     return null;
     //throw new Error('Mail is already registered');
   }
-}
+}*/
 ;
