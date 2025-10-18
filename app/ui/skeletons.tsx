@@ -83,7 +83,8 @@ export function LatestSignaturesSkeleton() {
 }
 
 export default function DashboardSkeleton() {
-  return (
+  return (<></>);
+  /*return (
     <>
       <div
         className={`${shimmer} relative mb-4 h-8 w-36 overflow-hidden rounded-md bg-gray-100`}
@@ -99,7 +100,7 @@ export default function DashboardSkeleton() {
         <LatestSignaturesSkeleton />
       </div>
     </>
-  );
+  );*/
 }
 
 export function TableRowSkeleton() {
