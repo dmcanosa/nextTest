@@ -26,8 +26,8 @@ export default async function Page() {
   const decrypted = AES.decrypt(signature.data, secretSigKey).toString(Utf8);
   //console.log('decrypted sig: ', decrypted);
 
-  const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
-  const decoded = Base64.decode(trimmed as string);
+  //const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
+  //const decoded = Base64.decode(trimmed as string);
         
   //const decryptedSig:string = await crypto.decrypt(signature.data);
     
@@ -44,7 +44,7 @@ export default async function Page() {
         ]}
       />
       <Form 
-        sig={decoded}
+        sig={decrypted}
         sig_id={signature.id}
       />
     </main>
