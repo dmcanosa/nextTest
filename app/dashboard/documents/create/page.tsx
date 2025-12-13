@@ -4,8 +4,12 @@ import { fetchSignatureByUserId } from '@/app/lib/data';
 //import { cookies } from 'next/headers';
 import { Signature/*, User*/ } from 'app/lib/definitions';
 //import { getUser } from '@/auth';
-import NextCrypto from 'next-crypto';
+//import NextCrypto from 'next-crypto';
 import { createClient } from 'app/lib/supabase/server';
+import { AES, Utf8 } from 'crypto-es';
+import { Base64 } from 'js-base64';
+
+const secretSigKey = process.env.SECRET_SIGNATURE_KEY as string;
 
 export default async function Page() {
   const supabase = await createClient()
@@ -14,12 +18,18 @@ export default async function Page() {
 
 
   //const cookieStore = await cookies()
-  const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+  //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
   //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
   const signature:Signature = await fetchSignatureByUserId(userId); 
   //const signature:Signature = await fetchSignatureByUserId(decrypted); 
   console.log('siggg ',signature.id); 
-  const decryptedSig:string = await crypto.decrypt(signature.data);
+  const decrypted = AES.decrypt(signature.data, secretSigKey).toString(Utf8);
+  //console.log('decrypted sig: ', decrypted);
+
+  const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
+  const decoded = Base64.decode(trimmed as string);
+        
+  //const decryptedSig:string = await crypto.decrypt(signature.data);
     
   return (
     <main>
@@ -34,7 +44,7 @@ export default async function Page() {
         ]}
       />
       <Form 
-        sig={decryptedSig}
+        sig={decoded}
         sig_id={signature.id}
       />
     </main>

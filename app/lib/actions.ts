@@ -1,20 +1,12 @@
 'use server';
 
 import { z } from 'zod';
-//import { sql } from '@vercel/postgres';
-//import { neon } from '@neondatabase/serverless';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-//import { /*signUp, /*signIn,*/ getUserById} from '@/auth';
-import { AuthError/*, User*/ } from 'next-auth';
-//import { cookies } from 'next/headers';
-//import { User } from 'app/lib/definitions';
-import NextCrypto from 'next-crypto';
 import { fetchDocumentById/*, saveDataToFile*/ } from './data';
-//import { fetchSignatureByUserId } from '@/app/lib/data';
-//import { Signature/*, User*/ } from 'app/lib/definitions';
-//import { getUser } from '@/auth';
 import { createClient } from 'app/lib/supabase/server';
+import { AES, Utf8 } from 'crypto-es';
+import { Base64 } from 'js-base64';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -32,8 +24,10 @@ const docFormSchema = z.object({
 
 const CreateSignature = FormSchema.omit({ id: true });
 const CreateDocument = docFormSchema.omit({ id: true });
-const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-    
+
+//const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+const secretSigKey = process.env.SECRET_SIGNATURE_KEY as string;
+
 export type State = {
   errors?: {
     data?: string[];
@@ -74,23 +68,8 @@ export async function authenticate(
     }
     revalidatePath('/dashboard', 'layout')
     redirect('/dashboard')
-    
-    //console.log('authenticate!!!', formData);
-    //en flow de register pasa por aca pero no hace bien el signin
-    
-    //next auth flow
-    //const user = await signIn('credentials', formData);
-    //next auth flow
-
-
-
-    /*console.log('222authenticate!!!', user);
-    if(user){
-      console.log('---->logged in', user);
-      //redirect('/dashboard');  
-    }*/
   } catch (error) {
-    if (error instanceof AuthError) {
+    if (error && error.type){
       switch (error.type) {
         case 'CredentialsSignin':
           return 'Invalid credentials.';
@@ -109,52 +88,30 @@ export async function register(
   try {
     //console.log('formdata: ',formData);
     const supabase = await createClient();
-    
-    //nextauth flow
-    //const data:User | { errors: { email?: string[]; name?: string[]; password?: string[]; password2?: string[]; }} = await signUp(formData);
-    //nextauth flow
-    
-    //console.log('data signup register: ',data);
-    //store user ID
-    
-    /*if(data && data['errors']){
-      return Object.values(data['errors'])[0][0];
-    }else if(!data){
-      return ['Mail is already registered'];
-    }else{*/  
-      /*const cookieStore = await cookies();
-      const encrypted = await crypto.encrypt((data as User).id);
-      console.log('user_id: ',data['id']);
-      cookieStore.set('user_id', encrypted);
-      console.log('errors else:');*/
       
-      const dataAuth = {
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
-        name: formData.get('name') as string,
-        
-      }
-      console.log('signup data: ',dataAuth)
-      //const { error } = await supabase.auth.signUp(dataAuth)
-      const res = await supabase.auth.signUp(dataAuth);
-      console.log(res);
-      if (res.error) {
-        console.log('signup error: ',res.error);
-        redirect('/error');
-      }
-      const res2 = await supabase
-        .from('users')
-        .insert({ id:res.data.user.id, name: dataAuth.name, email: dataAuth.email, password: dataAuth.password })
+    const dataAuth = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+      name: formData.get('name') as string,
       
-      console.log(res2.error);
-      revalidatePath('/dashboard', 'layout');
-      redirect('/dashboard');
-
-      //next auth flow
-      //await authenticate('credentials', formData);
-    //}  
+    }
+    console.log('signup data: ',dataAuth)
+    //const { error } = await supabase.auth.signUp(dataAuth)
+    const res = await supabase.auth.signUp(dataAuth);
+    console.log(res);
+    if (res.error) {
+      console.log('signup error: ',res.error);
+      redirect('/error');
+    }
+    const res2 = await supabase
+      .from('users')
+      .insert({ id:res.data.user.id, name: dataAuth.name, email: dataAuth.email, password: dataAuth.password })
+    
+    console.log(res2.error);
+    revalidatePath('/dashboard', 'layout');
+    redirect('/dashboard');
   } catch (error) {
-    if (error instanceof AuthError) {
+    if (error && error.type) {
       switch (error.type) {
         case 'CredentialsSignin':
           return 'Invalid credentials.';
@@ -182,45 +139,32 @@ export async function createSignature(prevState: State, formData: FormData, need
   const user = await supabase.auth.getUser();
   console.log('user on create sig: ', user);
 
-  //const cookieStore = await cookies();
-  //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
   const decrypted = user.data.user.id as string;
-  const signature = await crypto.encrypt(validatedFields.data.data);
+  
+  const encryptedSig = AES.encrypt(validatedFields.data.data, secretSigKey).toString();
+      
+  //const signature = await crypto.encrypt(validatedFields.data.data);
+  
   if(userId == '')
     userId = decrypted;  
   try {
     //const user:User = await getUserById(userId);  
     //if(user){
       
+    const { error } = await supabase
+      .from('signatures')
+      .update({ active: false })
+      .eq('user_id', userId)
+    
+    console.log(error);
+    
+    (async function () {
       const { error } = await supabase
         .from('signatures')
-        .update({ active: false })
-        .eq('user_id', userId)
+        .insert({ data: encryptedSig, active: true, user_id: userId })
       
-      console.log(error);
-      
-      (async function () {
-        const { error } = await supabase
-          .from('signatures')
-          .insert({ data: signature, active: true, user_id: userId })
-        
-        console.log(error);  
-      })();
-    
-      
-      
-      /*const sql = neon(`${process.env.DATABASE_URL}`);
-      await sql`
-        UPDATE signatures 
-          SET active = false 
-          WHERE user_id = ${userId}
-          AND active = true
-      `;
-      await sql`
-        INSERT INTO signatures (data, created, active, user_id)
-        VALUES (${signature}, NOW(), true, ${userId})
-      `;*/
-    //}
+      console.log(error);  
+    })();
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create Signature.'+error,
@@ -233,32 +177,6 @@ export async function createSignature(prevState: State, formData: FormData, need
   }
 }
 
-/*const UpdateSignature = FormSchema.omit({ id: true, date: true });
- 
-export async function updateSignature(id: string, formData: FormData) {
-  const { amount, status } = UpdateSignature.parse({
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
- 
-  const amountInCents = amount * 100;
-  
-  //console.log("UPDATE signatures SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status} WHERE id = ${id}");
-
-  try {
-    await sql`
-        UPDATE signatures
-        SET amount = ${amountInCents}, status = ${status}
-        WHERE id = ${id}
-      `;
-  } catch (error) {
-    return { message: 'Database Error: Failed to Update Signature.'+error };
-  }
- 
-  revalidatePath('/dashboard/signatures');
-  redirect('/dashboard/signatures');
-}*/
-
 export async function deleteSignature(id: string) {
   try {
     const supabase = await createClient();
@@ -270,10 +188,6 @@ export async function deleteSignature(id: string) {
     
     console.log(error);
     
-    /*const sql = neon(`${process.env.DATABASE_URL}`);
-    //await sql`DELETE FROM signatures WHERE id = ${id}`;
-    await sql`UPDATE signatures SET active = false WHERE id = ${id}`;
-    */
     revalidatePath('/dashboard/signatures');
     return { message: 'Deleted signature.' };
   } catch (error) {
@@ -298,8 +212,6 @@ export async function createDocument(prevState: docState, formData: FormData, ne
     };
   }
 
-  //const cookieStore = await cookies()
-  //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
   const template_name = validatedFields.data.template_name;
   const signature_id = validatedFields.data.signature_id;
   const template_b64 = validatedFields.data.template_b64;
@@ -330,15 +242,6 @@ export async function createDocument(prevState: docState, formData: FormData, ne
       });
          
     console.log(error);  
-    
-    /*const user:User = await getUserById(userId);  
-    if(user){
-      const sql = neon(`${process.env.DATABASE_URL}`);
-      await sql`
-        INSERT INTO documents (template_name, template_data, signed_document, signed, signature_id, user_id, date_signed)
-        VALUES (${template_name}, ${template_b64}, ${signed_b64}, true, ${signature_id}, ${userId}, NOW())
-      `;
-    }*/
   } catch (error) {
     return {
       message: 'Database Error: Failed to Create document.'+error,
@@ -360,10 +263,6 @@ export async function downloadDocument(id: string) {
   const doc = await fetchDocumentById(id);
   console.log('doc: ',doc);
   const report = Buffer.from(doc.signed_document, 'base64');
-  //const signature:Signature = await fetchSignatureByUserId(doc.user_id); 
-  //const decryptedSig:string = await crypto.decrypt(signature.data);
-
-
   try {
     saveDataToFile(
       report,
@@ -417,11 +316,6 @@ export async function deleteDocument(id: string) {
     
     console.log(error);
     
-    
-    /*const sql = neon(`${process.env.DATABASE_URL}`);
-    //await sql`DELETE FROM signatures WHERE id = ${id}`;
-    await sql`UPDATE documents SET active = false WHERE id = ${id}`; //LIMIT 1`;
-    */
     revalidatePath('/dashboard/documents');
     return { message: 'Deleted Document.' };
   } catch (error) {

@@ -3,9 +3,13 @@ import { DeleteSignature } from '@/app/ui/signatures/buttons';
 //import SignatureStatus from '@/app/ui/signatures/status';
 //import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredSignatures } from '@/app/lib/data';
-import NextCrypto from 'next-crypto';
+import { AES, Utf8 } from 'crypto-es';
+import { Base64 } from 'js-base64';
 
-const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+//import NextCrypto from 'next-crypto';
+
+//const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+const secretSigKey = process.env.EXPO_PUBLIC_SECRET_SIGNATURE_KEY as string;
   
 export default async function SignaturesTable({
   query,
@@ -18,8 +22,16 @@ export default async function SignaturesTable({
   
   const decryptedSignatures = [];
   await Promise.all(signatures.map( async (sig) => {
-    const decrypted = await crypto.decrypt(sig.data);
-    sig.data = decrypted;
+    const decrypted = AES.decrypt(sig.data, secretSigKey).toString(Utf8);
+    //console.log('decrypted sig: ', decrypted);
+
+    const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
+    const decoded = Base64.decode(trimmed as string);
+    //console.log('decoded sig: ', decoded);
+    sig.data = decoded;
+        
+    //const decrypted = await crypto.decrypt(sig.data);
+    //sig.data = decrypted;
     sig.key = sig.id;
     const date = new Date(sig.created);
     //console.log('date: ', date.toDateString());
@@ -33,42 +45,6 @@ export default async function SignaturesTable({
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0" key={Math.random()}>
-          {/*
-
-          <div className="md:hidden" key={Math.random()} >
-            {decryptedSignatures?.map((signature) => (
-              <div
-                key={signature.key}
-                className="mb-2 w-full rounded-md bg-white p-4"
-              >
-                <div className="flex items-center justify-between border-b pb-4">
-                  {signature.data &&
-                    <Image 
-                      src={signature.data.split('==')[0]}
-                      width={128}
-                      height={96}
-                      alt={`signature`}
-                    />
-                  }  
-                </div>
-                <div className="flex w-full items-center justify-between pt-4">
-                  <div>
-                    <p className="text-xl font-medium">
-                      {signature.created}
-                    </p>
-                    <p className="text-xl font-medium">
-                      {signature.active ? 'ACTIVA' : 'INACTIVA'}
-                    </p>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <DeleteSignature id={signature.id} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          */}
-
           <table className="hidden min-w-full text-gray-900 md:table" key={3}>
             <thead className="rounded-lg text-left text-sm font-normal" key={Math.random()}>
               <tr key={Math.random()}>

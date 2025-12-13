@@ -1,12 +1,7 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState } from 'react';
 import Link from 'next/link';
-/*import {
-  CheckIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-} from '@heroicons/react/24/outline';*/
 import { Button } from '@/app/ui/button';
 import { createSignature, State } from '@/app/lib/actions';
 import Canvas from '@/app/dashboard/signatures/canvas';
@@ -15,28 +10,6 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createSignature, initialState);
   
-  useEffect(() => {
-    console.log('body on canvas: ', document);
-    
-    /*document.body.addEventListener('touchstart', (e) => {
-      if(e.target == document.getElementById('canvas')){
-        e.preventDefault();
-      }
-    }, false);
-  
-    document.body.addEventListener('touchend', (e) => {
-      if(e.target == document.getElementById('canvas')){
-        e.preventDefault();
-      }
-    }, false);
-  
-    document.body.addEventListener('touchmove', (e) => {
-      if(e.target == document.getElementById('canvas')){
-        e.preventDefault();
-      }
-    }, false);*/
-  }, []);
-
   const saveCanvas = (s:string):void => {
     console.log('saveCanvas!');
     const inputCanvas = document.getElementById('canvasString') as HTMLInputElement;
@@ -68,9 +41,6 @@ export default function Form(/*{ customers }: { customers: CustomerField[] }*/) 
               ))}
           </div>
         </div>
-
-        {/* Invoice Status */}
-        
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
