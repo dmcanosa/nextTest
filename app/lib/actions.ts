@@ -236,7 +236,8 @@ export async function createDocument(prevState: docState, formData: FormData, ne
         signed_document: signed_b64,  
         signed: true,  
         signature_id: signature_id,  
-        user_id: userId,  
+        user_id: userId,
+        active: true,  
         //date_signed: NOW(),  
         
       });
