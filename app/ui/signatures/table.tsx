@@ -9,7 +9,7 @@ import { Base64 } from 'js-base64';
 //import NextCrypto from 'next-crypto';
 
 //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
-const secretSigKey = process.env.EXPO_PUBLIC_SECRET_SIGNATURE_KEY as string;
+const secretSigKey = process.env.SECRET_SIGNATURE_KEY as string;
   
 export default async function SignaturesTable({
   query,
@@ -25,10 +25,11 @@ export default async function SignaturesTable({
     const decrypted = AES.decrypt(sig.data, secretSigKey).toString(Utf8);
     //console.log('decrypted sig: ', decrypted);
 
-    const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
-    const decoded = Base64.decode(trimmed as string);
+    //const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
+    //const decoded = Base64.decode(trimmed as string);
     //console.log('decoded sig: ', decoded);
-    sig.data = decoded;
+    sig.data = decrypted;
+    //sig.data = decoded;
         
     //const decrypted = await crypto.decrypt(sig.data);
     //sig.data = decrypted;

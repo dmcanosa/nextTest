@@ -14,13 +14,14 @@ export async function fetchFilteredSignatures(
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  console.log(query, offset);
+  console.log('query and offset: '+query+' | '+offset);
   console.log('offset: ', offset);
   
   try {
     const supabase = await createClient()
     const user = await supabase.auth.getUser();
     const userId = user.data.user.id as string;
+    console.log('user id: ',userId);
 
     const { data, error } = await supabase
       .from('signatures')
@@ -29,7 +30,7 @@ export async function fetchFilteredSignatures(
       .limit(ITEMS_PER_PAGE)
       .range(offset, (offset + ITEMS_PER_PAGE - 1))
       
-    console.log(error);
+    console.log('error :',error);
     console.log('range: ',offset+' '+(offset + ITEMS_PER_PAGE - 1));
     //console.log('data on fetch sigs: ',data);
       
