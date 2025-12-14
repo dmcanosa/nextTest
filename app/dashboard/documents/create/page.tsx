@@ -22,9 +22,11 @@ export default async function Page() {
   //const decrypted = await crypto.decrypt(cookieStore.get('user_id').value);
   const signature:Signature = await fetchSignatureByUserId(userId); 
   //const signature:Signature = await fetchSignatureByUserId(decrypted); 
-  console.log('siggg ',signature.id); 
+  console.log('siggg ',signature.id);
+  console.log('siggg data: ',signature.data);
+   
   const decrypted = AES.decrypt(signature.data, secretSigKey).toString(Utf8);
-  //console.log('decrypted sig: ', decrypted);
+  console.log('decrypted sig: ', decrypted);
 
   //const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
   //const decoded = Base64.decode(trimmed as string);

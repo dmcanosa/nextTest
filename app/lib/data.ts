@@ -309,7 +309,7 @@ export async function fetchSignatureByUserId(id: string):Promise<Signature> {
       .eq('active', true)
       .eq('user_id', id)
     console.log(error);
-    console.log('fetchsigbyid: ',data);
+    //console.log('fetchsigbyid: ',data);
     
     return data[0];
     /*const sql = neon(`${process.env.DATABASE_URL}`);

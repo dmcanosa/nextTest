@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { fetchDocumentById/*, saveDataToFile*/ } from './data';
 import { createClient } from 'app/lib/supabase/server';
-import { AES, Utf8 } from 'crypto-es';
+import { AES, CBC, Pkcs7, PBKDF2, WordArray, Utf8 } from 'crypto-es';
 import { Base64 } from 'js-base64';
 
 const FormSchema = z.object({
@@ -141,7 +141,22 @@ export async function createSignature(prevState: State, formData: FormData, need
 
   const decrypted = user.data.user.id as string;
   
-  const encryptedSig = AES.encrypt(validatedFields.data.data, secretSigKey).toString();
+
+  const salt = WordArray.random(128/8);
+  const key256 = PBKDF2(secretSigKey, salt, { keySize: 256/32 });
+  const iv = WordArray.random(128/8);
+  
+  //console.log('SALT: ', salt.toString());
+  const encryptedSig = AES.encrypt(
+    validatedFields.data.data, 
+    key256, 
+    { iv: iv, 
+      mode: CBC, 
+      padding: Pkcs7 
+    }
+  ).toString();
+
+  //const encryptedSig = AES.encrypt(validatedFields.data.data, secretSigKey).toString();
       
   //const signature = await crypto.encrypt(validatedFields.data.data);
   

@@ -10,6 +10,7 @@ export default function Form({ sig, sig_id }) {
   const initialState: docState = { message: null, errors: {} };
   const [state, formAction] = useActionState(createDocument, initialState);
   console.log('sig::: ',sig_id);
+  //console.log('sigdata::: ',sig);
 
   const onFileUpload = async (event) => {
     console.log('event: ',event.target.files[0]);
@@ -17,9 +18,11 @@ export default function Form({ sig, sig_id }) {
     //document.getElementById('template_name_label').innerHTML = event.target.files[0].name;
     
     const template:Uint8Array<ArrayBufferLike> = await readFileIntoArrayBuffer(event.target.files[0]) as Uint8Array<ArrayBufferLike>;
+    console.log('template: ',template);
     const sigData = sig.slice('data:image/png;base64,'.length);
     const sigId = sig_id;
     console.log('sig: ',sigId);
+    //console.log('sigdata2::: ',sigData);
     (document.getElementById('template_b64') as HTMLInputElement).value = Buffer.from(template).toString('base64');
     (document.getElementById('signature_id') as HTMLInputElement).value = sigId;
     
@@ -29,6 +32,9 @@ export default function Form({ sig, sig_id }) {
       additionalJsContext: {
         firma: () => {
           const svg_data = Buffer.from(sigData, 'base64');
+          console.log('sigdata en makereport: ',sigData);
+          console.log('svgdata en makereport: ',svg_data);
+          
           return { width: 4, height: 4, data: svg_data, extension: '.svg' };                    
         }
       }
