@@ -3,14 +3,21 @@ import { DeleteSignature } from '@/app/ui/signatures/buttons';
 //import SignatureStatus from '@/app/ui/signatures/status';
 //import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredSignatures } from '@/app/lib/data';
-import { AES, Utf8 } from 'crypto-es';
+import { AES, CBC, Pkcs7, PBKDF2, WordArray, Utf8 } from 'crypto-es';
 import { Base64 } from 'js-base64';
 
 //import NextCrypto from 'next-crypto';
 
 //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
+//const secretSigKey = process.env.SECRET_SIGNATURE_KEY as string;
 const secretSigKey = process.env.SECRET_SIGNATURE_KEY as string;
-  
+const saltKey = process.env.SECRET_SIGNATURE_KEY_SALT as string;
+const iv = process.env.SECRET_SIGNATURE_KEY_IV as string;
+
+const salt = Utf8.parse(saltKey);
+const key256 = PBKDF2(secretSigKey, salt, { keySize: 256/32 });
+const iv_wa = Utf8.parse(iv);
+
 export default async function SignaturesTable({
   query,
   currentPage,
@@ -22,14 +29,29 @@ export default async function SignaturesTable({
   
   const decryptedSignatures = [];
   await Promise.all(signatures.map( async (sig) => {
-    const decrypted = AES.decrypt(sig.data, secretSigKey).toString(Utf8);
+    //const decrypted = AES.decrypt(sig.data, secretSigKey).toString(Utf8);
+    
+    const config = {
+      iv: iv_wa, 
+      mode: CBC,
+      padding: Pkcs7
+    };
+
+    const dec = AES.decrypt(sig.data, key256, config);//.toString(); //Utf8);
+    console.log('decrypted sig: ', dec);
+    const decrypted = dec.toString(Utf8);
+    console.log('decrypted sig str: ', decrypted);  
+    //const trimmed = decrypted.indexOf('data:image') >= 0 ? decrypted?.replace(/^data:image\/svg\+xml;base64,/, '') : decrypted;
+    //console.log('trimmed sig: ', trimmed); 
+
     //console.log('decrypted sig: ', decrypted);
 
     //const trimmed = decrypted?.replace(/^data:image\/svg\+xml;base64,/, '');
     //const decoded = Base64.decode(trimmed as string);
     //console.log('decoded sig: ', decoded);
-    sig.data = decrypted;
+    //sig.data = decrypted;
     //sig.data = decoded;
+    sig.data = decrypted;
         
     //const decrypted = await crypto.decrypt(sig.data);
     //sig.data = decrypted;

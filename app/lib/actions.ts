@@ -27,6 +27,12 @@ const CreateDocument = docFormSchema.omit({ id: true });
 
 //const crypto = new NextCrypto(process.env.SECRET_SIGNATURE_KEY);
 const secretSigKey = process.env.SECRET_SIGNATURE_KEY as string;
+const saltKey = process.env.SECRET_SIGNATURE_KEY_SALT as string;
+const iv = process.env.SECRET_SIGNATURE_KEY_IV as string;
+
+const salt = Utf8.parse(saltKey);
+const key256 = PBKDF2(secretSigKey, salt, { keySize: 256/32 });
+const iv_wa = Utf8.parse(iv);
 
 export type State = {
   errors?: {
@@ -142,19 +148,21 @@ export async function createSignature(prevState: State, formData: FormData, need
   const decrypted = user.data.user.id as string;
   
 
-  const salt = WordArray.random(128/8);
+  /*const salt = WordArray.random(128/8);
   const key256 = PBKDF2(secretSigKey, salt, { keySize: 256/32 });
-  const iv = WordArray.random(128/8);
+  const iv = WordArray.random(128/8);*/
   
   //console.log('SALT: ', salt.toString());
   const encryptedSig = AES.encrypt(
     validatedFields.data.data, 
     key256, 
-    { iv: iv, 
+    { iv: iv_wa, 
       mode: CBC, 
       padding: Pkcs7 
     }
   ).toString();
+
+  //const encryptedSig = validatedFields.data.data;
 
   //const encryptedSig = AES.encrypt(validatedFields.data.data, secretSigKey).toString();
       
