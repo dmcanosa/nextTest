@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { fetchDocumentById/*, saveDataToFile*/ } from './data';
 import { createClient } from 'app/lib/supabase/server';
+import { parseSupabaseError, logError } from './error-handler';
+import { getCurrentUserId } from './supabase/auth-service';
 import { AES, CBC, Pkcs7, PBKDF2, WordArray, Utf8 } from 'crypto-es';
 import { Base64 } from 'js-base64';
 
@@ -75,15 +77,9 @@ export async function authenticate(
     revalidatePath('/dashboard', 'layout')
     redirect('/dashboard')
   } catch (error) {
-    if (error && error.type){
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
+    logError(error, 'authenticate');
+    const appError = parseSupabaseError(error);
+    return appError.message;
   }
 }
 
@@ -109,23 +105,18 @@ export async function register(
       console.log('signup error: ',res.error);
       redirect('/error');
     }
+    // Only store non-sensitive user data - passwords are handled by Supabase Auth
     const res2 = await supabase
       .from('users')
-      .insert({ id:res.data.user.id, name: dataAuth.name, email: dataAuth.email, password: dataAuth.password })
+      .insert({ id:res.data.user.id, name: dataAuth.name, email: dataAuth.email })
     
     console.log(res2.error);
     revalidatePath('/dashboard', 'layout');
     redirect('/dashboard');
   } catch (error) {
-    if (error && error.type) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
+    logError(error, 'register');
+    const appError = parseSupabaseError(error);
+    return appError.message;
   }
 }
 
@@ -141,11 +132,8 @@ export async function createSignature(prevState: State, formData: FormData, need
     };
   }
   
-  const supabase = await createClient();
-  const user = await supabase.auth.getUser();
-  console.log('user on create sig: ', user);
-
-  const decrypted = user.data.user.id as string;
+  try {
+    const userId = await getCurrentUserId();
   
 
   /*const salt = WordArray.random(128/8);
@@ -168,8 +156,7 @@ export async function createSignature(prevState: State, formData: FormData, need
       
   //const signature = await crypto.encrypt(validatedFields.data.data);
   
-  if(userId == '')
-    userId = decrypted;  
+  // userId already set from getCurrentUserId or parameter  
   try {
     //const user:User = await getUserById(userId);  
     //if(user){

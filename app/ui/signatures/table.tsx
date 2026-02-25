@@ -38,9 +38,9 @@ export default async function SignaturesTable({
     };
 
     const dec = AES.decrypt(sig.data, key256, config);//.toString(); //Utf8);
-    console.log('decrypted sig: ', dec);
+    //console.log('decrypted sig: ', dec);
     const decrypted = dec.toString(Utf8);
-    console.log('decrypted sig str: ', decrypted);  
+    //console.log('decrypted sig str: ', decrypted);  
     //const trimmed = decrypted.indexOf('data:image') >= 0 ? decrypted?.replace(/^data:image\/svg\+xml;base64,/, '') : decrypted;
     //console.log('trimmed sig: ', trimmed); 
 
