@@ -6,13 +6,14 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { createDocument, docState } from '@/app/lib/actions';
 
-export default function Form({ sig, sig_id }) {
+export default function Form({ sig, sig_id }: {sig: string, sig_id: string}) {
   const initialState: docState = { message: null, errors: {} };
   const [state, formAction] = useActionState(createDocument, initialState);
   console.log('sig::: ',sig_id);
   //console.log('sigdata::: ',sig);
 
-  const onFileUpload = async (event) => {
+  const onFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files?.[0]) return;
     console.log('event: ',event.target.files[0]);
     (document.getElementById('template_name') as HTMLInputElement).value = event.target.files[0].name;
     //document.getElementById('template_name_label').innerHTML = event.target.files[0].name;
@@ -50,11 +51,19 @@ export default function Form({ sig, sig_id }) {
   }
 
   useEffect(() => {
-    document.getElementById('template_file').addEventListener('change', onFileUpload, false);
-      
+    const templateFile = document.getElementById('template_file') as HTMLInputElement | null;
+    if (templateFile) {
+      const handleChange = (e: Event) => {
+        if (e.target instanceof HTMLInputElement) {
+          onFileUpload(e as unknown as React.ChangeEvent<HTMLInputElement>);
+        }
+      };
+      templateFile.addEventListener('change', handleChange, false);
+      return () => templateFile.removeEventListener('change', handleChange);
+    }
   }, []);
 
-  const readFileIntoArrayBuffer = fd =>
+  const readFileIntoArrayBuffer = (fd: File) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onerror = reject;
@@ -83,7 +92,7 @@ export default function Form({ sig, sig_id }) {
             </div>
           </div>
           <div id="template-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.template_name &&
+            {state?.errors?.template_name &&
               state.errors.template_name.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500" key={error}>
                   {error}

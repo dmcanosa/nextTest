@@ -9,7 +9,7 @@ type CanvasProps = {
 export default function Canvas( {saveCanvas}: CanvasProps){
   const [mouseDown, setMouseDown] = useState(false);
   const [mouseDownPoint, setMouseDownPoint] = useState({x: 0, y: 0});
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleMouseDown = (e: SyntheticEvent) => {
     console.log('mouse Down ',(e.nativeEvent as MouseEvent).offsetX+' '+(e.nativeEvent as MouseEvent).offsetY);
@@ -58,33 +58,39 @@ export default function Canvas( {saveCanvas}: CanvasProps){
   const handleTouchStart = (e: TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!canvasRef.current) return;
+    
     const touch = e.touches[0];
-    const me:MouseEvent = new MouseEvent('mousedown', {
-      clientX : touch.clientX,
-      clientY : touch.clientY,
-    })
+    const me = new MouseEvent('mousedown', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+    });
     canvasRef.current.dispatchEvent(me);
   };
   
   const handleTouchMove = (e: TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!canvasRef.current) return;
+    
     const touch = e.touches[0];
-    const me:MouseEvent = new MouseEvent('mousemove', {
-      clientX : touch.clientX,
-      clientY : touch.clientY,
-    })
+    const me = new MouseEvent('mousemove', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+    });
     canvasRef.current.dispatchEvent(me);
   };
   
   const handleTouchEnd = (e: TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!canvasRef.current) return;
+    
     const touch = e.touches[0];
-    const me:MouseEvent = new MouseEvent('mouseup', {
-      clientX : touch.clientX,
-      clientY : touch.clientY,
-    })
+    const me = new MouseEvent('mouseup', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+    });
     canvasRef.current.dispatchEvent(me);
   };
   

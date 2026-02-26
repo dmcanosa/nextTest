@@ -20,7 +20,7 @@ export async function fetchFilteredSignatures(
   try {
     const supabase = await createClient()
     const user = await supabase.auth.getUser();
-    const userId = user.data.user.id as string;
+    const userId = user.data.user!.id as string;
     console.log('user id: ',userId);
 
     const { data, error } = await supabase
@@ -78,7 +78,7 @@ export async function fetchSignaturesPages(query: string) {
     console.log(query);
     const supabase = await createClient()
     const user = await supabase.auth.getUser();
-    const userId = user.data.user.id as string;
+    const userId = user.data.user!.id as string;
 
     const { count, error } = await supabase
       .from('signatures')
@@ -162,7 +162,7 @@ export async function fetchFilteredDocuments(
   try {
     const supabase = await createClient()
     const user = await supabase.auth.getUser();
-    const userId = user.data.user.id as string;
+    const userId = user.data.user!.id as string;
 
     const { data, error } = await supabase
       .from('documents')
@@ -224,7 +224,7 @@ export async function fetchDocumentsPages(query: string) {
     console.log(query);
     const supabase = await createClient()
     const user = await supabase.auth.getUser();
-    const userId = user.data.user.id as string;
+    const userId = user.data.user!.id as string;
 
     const { count, error } = await supabase
       .from('documents')
@@ -271,7 +271,7 @@ export async function fetchDocumentById(id: string) {
     console.log(error);
     console.log('fetchdocbyid: ',data);
     
-    const Document:Document = data[0] as Document;
+    const Document:Document = data?.[0] as Document;
     return Document;
     
     
@@ -311,7 +311,7 @@ export async function fetchSignatureByUserId(id: string):Promise<Signature> {
     console.log(error);
     //console.log('fetchsigbyid: ',data);
     
-    return data[0];
+    return data?.[0];
     /*const sql = neon(`${process.env.DATABASE_URL}`);
     const data = await sql`
       SELECT *

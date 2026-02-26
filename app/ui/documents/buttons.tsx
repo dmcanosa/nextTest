@@ -28,7 +28,7 @@ export function UpdateDocument({ id }: { id: string }) {
   );
 }
 
-export function saveDataToFile (data, fileName, mimeType){
+export function saveDataToFile (data: BlobPart | Buffer, fileName: string, mimeType: string){
   const blob = new Blob([data], { type: mimeType });
   const url = window.URL.createObjectURL(blob);
   downloadURL(url, fileName);
@@ -37,7 +37,7 @@ export function saveDataToFile (data, fileName, mimeType){
   }, 1000);
 }
 
-export function downloadURL(data, fileName){
+export function downloadURL(data: string, fileName: string){
   const a = document.createElement('a');
   a.href = data;
   a.download = fileName;
@@ -60,7 +60,7 @@ export function innerDownloadDocument(doc:string){
 }
 
 export function DownloadDocument({ doc }: { doc: string }) {
-  const downloadDocumentWithId = innerDownloadDocument.bind(null, doc);
+  const downloadDocumentWithId = innerDownloadDocument.bind(null, doc) as unknown as ((formData: FormData) => Promise<void>);
 
   return (
     <form action={downloadDocumentWithId}>
@@ -74,7 +74,7 @@ export function DownloadDocument({ doc }: { doc: string }) {
 
 export function DeleteDocument({ id }: { id: string }) {
   //console.log('del doc:',id);
-  const deleteDocumentWithId = deleteDocument.bind(null, id);
+  const deleteDocumentWithId = deleteDocument.bind(null, id) as unknown as ((formData: FormData) => Promise<void>);
   
   return (
     <form action={deleteDocumentWithId}>

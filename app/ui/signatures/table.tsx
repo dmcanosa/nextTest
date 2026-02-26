@@ -27,8 +27,18 @@ export default async function SignaturesTable({
 }) {
   const signatures = await fetchFilteredSignatures(query, currentPage);
   
-  const decryptedSignatures = [];
-  await Promise.all(signatures.map( async (sig) => {
+  type DecryptedSignature = {
+    data: string;
+    id: string;
+    created: string;
+    active?: boolean;
+    [key: string]: any;
+  };
+  const decryptedSignatures: DecryptedSignature[] = [];
+  if (!signatures) {
+    return <div>No signatures</div>;
+  }
+  await Promise.all(signatures.map( async (sig: any) => {
     //const decrypted = AES.decrypt(sig.data, secretSigKey).toString(Utf8);
     
     const config = {
@@ -37,7 +47,7 @@ export default async function SignaturesTable({
       padding: Pkcs7
     };
 
-    const dec = AES.decrypt(sig.data, key256, config);//.toString(); //Utf8);
+    const dec = AES.decrypt(sig.data as string, key256, config);//.toString(); //Utf8);
     //console.log('decrypted sig: ', dec);
     const decrypted = dec.toString(Utf8);
     //console.log('decrypted sig str: ', decrypted);  

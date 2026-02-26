@@ -108,7 +108,7 @@ export async function register(
     // Only store non-sensitive user data - passwords are handled by Supabase Auth
     const res2 = await supabase
       .from('users')
-      .insert({ id:res.data.user.id, name: dataAuth.name, email: dataAuth.email })
+      .insert({ id: res.data.user!.id, name: dataAuth.name, email: dataAuth.email })
     
     console.log(res2.error);
     revalidatePath('/dashboard', 'layout');
@@ -120,7 +120,7 @@ export async function register(
   }
 }
 
-export async function createSignature(prevState: State, formData: FormData, needsRedirect: boolean = true, userId:string = '') {
+export async function createSignature(prevState: State, formData: FormData) {
   const validatedFields = CreateSignature.safeParse({
     data: formData.get('canvasString'),
   });
@@ -133,57 +133,57 @@ export async function createSignature(prevState: State, formData: FormData, need
   }
   
   try {
-    const userId = await getCurrentUserId();
+    const actualUserId = await getCurrentUserId();
   
+    /*const salt = WordArray.random(128/8);
+    const key256 = PBKDF2(secretSigKey, salt, { keySize: 256/32 });
+    const iv = WordArray.random(128/8);*/
+    
+    //console.log('SALT: ', salt.toString());
+    const encryptedSig = AES.encrypt(
+      validatedFields.data.data, 
+      key256, 
+      { iv: iv_wa, 
+        mode: CBC, 
+        padding: Pkcs7 
+      }
+    ).toString();
 
-  /*const salt = WordArray.random(128/8);
-  const key256 = PBKDF2(secretSigKey, salt, { keySize: 256/32 });
-  const iv = WordArray.random(128/8);*/
-  
-  //console.log('SALT: ', salt.toString());
-  const encryptedSig = AES.encrypt(
-    validatedFields.data.data, 
-    key256, 
-    { iv: iv_wa, 
-      mode: CBC, 
-      padding: Pkcs7 
-    }
-  ).toString();
+    //const encryptedSig = validatedFields.data.data;
 
-  //const encryptedSig = validatedFields.data.data;
-
-  //const encryptedSig = AES.encrypt(validatedFields.data.data, secretSigKey).toString();
-      
-  //const signature = await crypto.encrypt(validatedFields.data.data);
-  
-  // userId already set from getCurrentUserId or parameter  
-  try {
-    //const user:User = await getUserById(userId);  
+    //const encryptedSig = AES.encrypt(validatedFields.data.data, secretSigKey).toString();
+        
+    //const signature = await crypto.encrypt(validatedFields.data.data);
+    
+    const supabase = await createClient();
+    //const user:User = await getUserById(actualUserId);  
     //if(user){
       
     const { error } = await supabase
       .from('signatures')
       .update({ active: false })
-      .eq('user_id', userId)
+      .eq('user_id', actualUserId)
     
-    console.log(error);
+    if (error) {
+      throw new Error(`Failed to deactivate signatures: ${error.message}`);
+    }
     
-    (async function () {
-      const { error } = await supabase
-        .from('signatures')
-        .insert({ data: encryptedSig, active: true, user_id: userId })
-      
-      console.log(error);  
-    })();
-  } catch (error) {
-    return {
-      message: 'Database Error: Failed to Create Signature.'+error,
-    };
-  }
+    const insertRes = await supabase
+      .from('signatures')
+      .insert({ data: encryptedSig, active: true, user_id: actualUserId })
+    
+    if (insertRes.error) {
+      throw new Error(`Failed to create signature: ${insertRes.error.message}`);
+    }
 
-  if(needsRedirect){
     revalidatePath('/dashboard/signatures');
     redirect('/dashboard/signatures');
+  } catch (error) {
+    logError(error, 'createSignature');
+    const appError = parseSupabaseError(error);
+    return {
+      message: appError.message,
+    };
   }
 }
 
@@ -196,24 +196,26 @@ export async function deleteSignature(id: string) {
       .update({ active: false })
       .eq('id', id)
     
-    console.log(error);
+    if (error) {
+      throw new Error(`Failed to delete signature: ${error.message}`);
+    }
     
     revalidatePath('/dashboard/signatures');
     return { message: 'Deleted signature.' };
   } catch (error) {
-    return { message: 'Database Error: Failed to Delete signature.'+error };
+    logError(error, 'deleteSignature');
+    const appError = parseSupabaseError(error);
+    return { message: appError.message };
   }
 }
 
-export async function createDocument(prevState: docState, formData: FormData, needsRedirect: boolean = true, userId:string = '') {
+export async function createDocument(prevState: docState, formData: FormData) {
   const validatedFields = CreateDocument.safeParse({
     signature_id: formData.get('signature_id'),
     template_name: formData.get('template_name'),
     template_b64: formData.get('template_b64'),
     signed_b64: formData.get('signed_b64'),
   });
-
-  console.log(userId);
 
   if (!validatedFields.success) {
     return {
@@ -222,59 +224,49 @@ export async function createDocument(prevState: docState, formData: FormData, ne
     };
   }
 
-  const template_name = validatedFields.data.template_name;
-  const signature_id = validatedFields.data.signature_id;
-  const template_b64 = validatedFields.data.template_b64;
-  const signed_b64 = validatedFields.data.signed_b64;
-  
-  /*if(userId == '')
-    userId = decrypted;*/  
   try {
-    const supabase = await createClient()
-    const user = await supabase.auth.getUser();
-    const userId = user.data.user.id as string;
+    // Get userId from auth
+    const actualUserId = await getCurrentUserId();
 
-    /*const { error } = await supabase
-      .from('signatures')
-      .insert({ data: signature, active: true, user_id: userId })*/
-        
+    const supabase = await createClient();
+    
     const { error } = await supabase
       .from('documents')
       .insert({ 
-        template_name: template_name,  
-        template_data: template_b64,  
-        signed_document: signed_b64,  
+        template_name: validatedFields.data.template_name,  
+        template_data: validatedFields.data.template_b64,  
+        signed_document: validatedFields.data.signed_b64,  
         signed: true,  
-        signature_id: signature_id,  
-        user_id: userId,
+        signature_id: validatedFields.data.signature_id,  
+        user_id: actualUserId,
         active: true,  
-        //date_signed: NOW(),  
-        
       });
          
-    console.log(error);  
-  } catch (error) {
-    return {
-      message: 'Database Error: Failed to Create document.'+error,
-    };
-  }
+    if (error) {
+      throw new Error(`Failed to create document: ${error.message}`);
+    }
 
-  if(needsRedirect){
     revalidatePath('/dashboard/documents');
     redirect('/dashboard/documents');
+  } catch (error) {
+    logError(error, 'createDocument');
+    const appError = parseSupabaseError(error);
+    return {
+      message: appError.message,
+    };
   }
 }
 
 export async function downloadDocument(id: string) {
   'use server';
 
-  console.log('downloadDOC: ',id);
-  //throw new Error('Failed to Delete Signature');
-  
-  const doc = await fetchDocumentById(id);
-  console.log('doc: ',doc);
-  const report = Buffer.from(doc.signed_document, 'base64');
   try {
+    const doc = await fetchDocumentById(id);
+    if (!doc) {
+      throw new Error('Document not found');
+    }
+    
+    const report = Buffer.from(doc.signed_document, 'base64');
     saveDataToFile(
       report,
       'report.docx',
@@ -282,16 +274,16 @@ export async function downloadDocument(id: string) {
     );
 
     revalidatePath('/dashboard/documents');
-    return { message: 'Deleted Document.' };
+    return { message: 'Downloaded Document.' };
   } catch (error) {
-    return { message: 'Database Error: Failed to Delete document.'+error };
+    logError(error, 'downloadDocument');
+    const appError = parseSupabaseError(error);
+    return { message: appError.message };
   }
 }
 
 
-export async function saveDataToFile(data, fileName, mimeType){
-  'use client';
-
+export async function saveDataToFile(data: BlobPart , fileName: string, mimeType: string){
   console.log('saveeee');
   const blob = new Blob([data], { type: mimeType });
   const url = window.URL.createObjectURL(blob);
@@ -301,7 +293,7 @@ export async function saveDataToFile(data, fileName, mimeType){
   }, 1000);
 }
 
-const downloadURL = (data, fileName) => {
+const downloadURL = (data: string, fileName: string) => {
   const a = document.createElement('a');
   a.href = data;
   a.download = fileName;
@@ -312,11 +304,6 @@ const downloadURL = (data, fileName) => {
 };
 
 export async function deleteDocument(id: string) {
-  //'use server';
-
-  //throw new Error('Failed to Delete Signature');
-  //console.log('del doc actions:',id);
-
   try {
     const supabase = await createClient();
     
@@ -325,11 +312,15 @@ export async function deleteDocument(id: string) {
       .update({ active: false })
       .eq('id', id)
     
-    console.log(error);
+    if (error) {
+      throw new Error(`Failed to delete document: ${error.message}`);
+    }
     
     revalidatePath('/dashboard/documents');
     return { message: 'Deleted Document.' };
   } catch (error) {
-    return { message: 'Database Error: Failed to Delete document.'+error };
+    logError(error, 'deleteDocument');
+    const appError = parseSupabaseError(error);
+    return { message: appError.message };
   }
 }

@@ -26,7 +26,7 @@ export function UpdateSignature({ id }: { id: string }) {
 }
 
 export function DeleteSignature({ id }: { id: string }) {
-  const deleteSignatureWithId = deleteSignature.bind(null, id);
+  const deleteSignatureWithId = deleteSignature.bind(null, id) as unknown as ((formData: FormData) => Promise<void>);
   
   return (
     <form action={deleteSignatureWithId}>
