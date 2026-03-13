@@ -30,8 +30,8 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2
       docx-templates:
-        specifier: ^4.13.0
-        version: 4.13.0
+        specifier: ^4.15.0
+        version: 4.15.0
       eslint:
         specifier: ^9.14.0
         version: 9.14.0(jiti@1.21.6)
@@ -780,8 +780,8 @@ packages:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
     engines: {node: '>=0.10.0'}
 
-  docx-templates@4.13.0:
-    resolution: {integrity: sha512-tTmR3WhROYctuyVReQ+PfCU3zprmC45/VuSVzn8EjovzpRkXYUdXiDatB9M8pasj0V+wuuOyY8bcSHvlQ2GNag==}
+  docx-templates@4.15.0:
+    resolution: {integrity: sha512-H0JEDFVCF5j64Do9fqHVWwF86MOWUnHhQ2dfGWy7C2o9yPwtbCT1pXpotE6165Px07fia1Ted1Xh1fj1UZ9u1g==}
     engines: {node: '>=6'}
 
   eastasianwidth@0.2.0:
@@ -2632,7 +2632,7 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  docx-templates@4.13.0:
+  docx-templates@4.15.0:
     dependencies:
       jszip: 3.10.1
       sax: 1.3.0
